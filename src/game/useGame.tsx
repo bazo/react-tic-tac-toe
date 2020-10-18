@@ -1,7 +1,8 @@
-import React, { Dispatch, FC, ReactElement, SetStateAction, useCallback, useEffect, useState } from "react";
+import React, { Dispatch, FC, ReactElement, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 
 import Board from "./components/Board";
 import { checkWin, createBoard, getNextPlayer, isBoardFilled } from "./functions";
+import FullSizeStrategy from "./strategies/fullSizeStrategy";
 import { Player, Settings } from "./types";
 
 interface GameHandlers {
@@ -21,6 +22,8 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 	const [winner, setWinner] = useState((null as unknown) as Player);
 	const [isDraw, setDraw] = useState(false);
 
+	const strategy = useMemo(() => FullSizeStrategy(settings.size), [settings.size]);
+
 	const reset = useCallback(() => {
 		setPlayer(Player.CROSS);
 		setBoardState(createBoard(settings.size));
@@ -37,7 +40,7 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 			boardState[index] = player;
 
 			const newBoard = [...boardState];
-			const isWin = checkWin(newBoard, player, index);
+			const isWin = checkWin(newBoard, player, index, strategy);
 			if (isWin) {
 				setWinner(player);
 				return;
