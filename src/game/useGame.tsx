@@ -37,7 +37,7 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 			boardState[index] = player;
 
 			const newBoard = [...boardState];
-			const isWin = checkWin(newBoard, player);
+			const isWin = checkWin(newBoard, player, index);
 			if (isWin) {
 				setWinner(player);
 				return;

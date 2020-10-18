@@ -7,7 +7,7 @@ import { playerSymbol } from "./functions";
 import { Settings } from "./types";
 import useGame from "./useGame";
 
-const initialSettings = { size: 3 } as Settings;
+const initialSettings = { size: 5 } as Settings;
 
 const Game: FC = () => {
 	const { board: Board, player, winner, isDraw, settings, setSettings, reset } = useGame(initialSettings);

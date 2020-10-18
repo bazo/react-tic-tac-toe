@@ -46,7 +46,7 @@ function checkColumn(boardState: BoardState, start: number, player: Player): boo
 	return true;
 }
 
-function checkLeftDiagonal(boardState: BoardState, player: Player): boolean {
+function checkDiagonal(boardState: BoardState, player: Player): boolean {
 	const size = getBoardSize(boardState);
 
 	let index = 0;
@@ -60,7 +60,7 @@ function checkLeftDiagonal(boardState: BoardState, player: Player): boolean {
 	return true;
 }
 
-function checkRightDiagonal(boardState: BoardState, player: Player): boolean {
+function checkAntiDiagonal(boardState: BoardState, player: Player): boolean {
 	const size = getBoardSize(boardState);
 
 	let index = size - 1;
@@ -74,32 +74,30 @@ function checkRightDiagonal(boardState: BoardState, player: Player): boolean {
 	return true;
 }
 
-export function checkWin(boardState: BoardState, currentPlayer: Player): boolean {
+export function checkWin(boardState: BoardState, currentPlayer: Player, index: number): boolean {
 	const size = getBoardSize(boardState);
 
-	//check rows
+	//check row
+	const rowIndex = getRowIndex(boardState, index);
 	const rowsStartIndexes = createRowStartIndexes(size);
-	for (const startIndex of rowsStartIndexes) {
-		const res = checkRow(boardState, startIndex, currentPlayer);
-		if (res) {
-			return true;
-		}
-	}
-
-	//check columns
-	const columnsStartIndexes = createColumnStartIndexes(size);
-	for (const startIndex of columnsStartIndexes) {
-		const res = checkColumn(boardState, startIndex, currentPlayer);
-		if (res) {
-			return true;
-		}
-	}
-
-	if (checkLeftDiagonal(boardState, currentPlayer)) {
+	const rowStartIndex = rowsStartIndexes[rowIndex];
+	if (checkRow(boardState, rowStartIndex, currentPlayer)) {
 		return true;
 	}
 
-	if (checkRightDiagonal(boardState, currentPlayer)) {
+	//check column
+	const columnIndex = getColumnIndex(boardState, index);
+	const columnsStartIndexes = createColumnStartIndexes(size);
+	const columnStartIndex = columnsStartIndexes[columnIndex];
+	if (checkColumn(boardState, columnStartIndex, currentPlayer)) {
+		return true;
+	}
+
+	if (isOnDiagonal(boardState, index) && checkDiagonal(boardState, currentPlayer)) {
+		return true;
+	}
+
+	if (isOnAntiDiagonal(boardState, index) && checkAntiDiagonal(boardState, currentPlayer)) {
 		return true;
 	}
 
@@ -120,4 +118,28 @@ export function playerSymbol(player: Player | undefined): SymbolText {
 
 export function getBoardSize(boardState: BoardState): number {
 	return Math.sqrt(boardState.length);
+}
+
+function getRowIndex(boardState: BoardState, index: number): number {
+	const size = getBoardSize(boardState);
+	return Math.floor(index / size);
+}
+
+function getColumnIndex(boardState: BoardState, index: number): number {
+	const size = getBoardSize(boardState);
+	return index % size;
+}
+
+function isOnDiagonal(boardState: BoardState, index: number): boolean {
+	const size = getBoardSize(boardState);
+	return index % (size + 1) === 0;
+}
+
+function isOnAntiDiagonal(boardState: BoardState, index: number): boolean {
+	const size = getBoardSize(boardState);
+	if (index === 0 || index === size - 1) {
+		return false;
+	}
+
+	return index % (size - 1) === 0;
 }
