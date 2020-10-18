@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 
 import Board from "./components/Board";
 import CenteredPanel from "./components/CenteredPanel";
+import PlayerIndicator from "./components/PlayerSymbol";
 import SettingsForm from "./components/SettingsForm";
 import { checkWin, createBoard, getNextPlayer, isBoardFilled, playerSymbol } from "./functions";
 import { Player, Settings } from "./types";
@@ -54,9 +55,7 @@ const Game: FC = () => {
 		<CenteredPanel>
 			<h1>Tic Tac Toe</h1>
 
-			<p>
-				Player: <span>{playerSymbol(player)}</span>
-			</p>
+			<PlayerIndicator player={player} />
 
 			<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
 
