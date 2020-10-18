@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { FC } from "react";
 
 import { getBoardSize, playerSymbol } from "../functions";
-import { BoardState } from "../types";
+import { BoardState, Player } from "../types";
 
 interface ContainerProps {
 	size: number;
@@ -39,6 +39,10 @@ const BoardContainer = styled.div<ContainerProps>`
 		span {
 			font-size: ${squareSize}px;
 			vertical-align: middle;
+
+			&.circle {
+				margin-top: -2px;
+			}
 		}
 	}
 `;
@@ -54,7 +58,7 @@ const Board: FC<Props> = ({ state, onClick }: Props) => {
 			{state.map((player, index) => {
 				return (
 					<div onClick={onClick.bind(null, index)} key={index}>
-						<span>{playerSymbol(player)}</span>
+						<span className={player === Player.CIRCLE ? "circle" : "cross"}>{playerSymbol(player)}</span>
 					</div>
 				);
 			})}
