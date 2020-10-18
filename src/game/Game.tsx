@@ -31,17 +31,17 @@ const Game: FC = () => {
 			board[index] = player;
 
 			const newBoard = [...board];
-			setBoard(newBoard);
-			const isWin = checkWin(board, player, index, settings.size);
+			const isWin = checkWin(newBoard, player);
 			if (isWin) {
 				setWinner(player);
 				return;
 			} else {
-				if (isBoardFilled(board, settings.size)) {
+				if (isBoardFilled(newBoard)) {
 					setDraw(true);
 					return;
 				}
 			}
+			setBoard(newBoard);
 			setPlayer(getNextPlayer(player));
 		}
 	};
@@ -66,15 +66,7 @@ const Game: FC = () => {
 					<div onClick={reset}>Reset</div>
 				</>
 			) : (
-				<Board size={settings.size}>
-					{board.map((player, index) => {
-						return (
-							<div onClick={handleSquareClick.bind(null, index)} key={index}>
-								<span>{playerSymbol(player)}</span>
-							</div>
-						);
-					})}
-				</Board>
+				<Board state={board} onClick={handleSquareClick} />
 			)}
 		</CenteredPanel>
 	);

@@ -1,3 +1,9 @@
+export enum SymbolText {
+	CROSS = "×",
+	CIRCLE = "○",
+	EMPTY = "",
+}
+
 export enum Player {
 	CROSS = "0",
 	CIRCLE = "1",

@@ -1,6 +1,10 @@
 import styled from "@emotion/styled";
+import React, { FC } from "react";
 
-interface Props {
+import { getBoardSize, playerSymbol } from "../functions";
+import { BoardState } from "../types";
+
+interface ContainerProps {
 	size: number;
 }
 
@@ -8,7 +12,7 @@ const squareSize = 48;
 const borderWidth = 1;
 const border = `${borderWidth}px solid #ccc`;
 
-const Board = styled.div<Props>`
+const BoardContainer = styled.div<ContainerProps>`
 	margin: 0 auto;
 	margin-top: 20px;
 	color: black;
@@ -38,4 +42,24 @@ const Board = styled.div<Props>`
 		}
 	}
 `;
+
+interface Props {
+	state: BoardState;
+	onClick: (index: number) => void;
+}
+
+const Board: FC<Props> = ({ state, onClick }: Props) => {
+	return (
+		<BoardContainer size={getBoardSize(state)}>
+			{state.map((player, index) => {
+				return (
+					<div onClick={onClick.bind(null, index)} key={index}>
+						<span>{playerSymbol(player)}</span>
+					</div>
+				);
+			})}
+		</BoardContainer>
+	);
+};
+
 export default Board;
