@@ -16,20 +16,31 @@ const Game: FC = () => {
 		setSettings(settings);
 	};
 
+	const handleResetClick = (): void => {
+		let doIt = true;
+		if (!winner) {
+			doIt = window.confirm("Really reset?");
+		}
+		if (doIt) {
+			reset();
+		}
+	};
+
 	return (
 		<CenteredPanel>
 			<h1>Tic Tac Toe</h1>
 
 			<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
+			<div onClick={handleResetClick}>Reset</div>
 
 			{winner || isDraw ? (
 				<>
 					<h2>{winner ? `Winner is ${playerSymbol(player)}` : "It's a draw"}</h2>
-					<div onClick={reset}>Reset</div>
 				</>
 			) : (
 				<PlayerIndicator player={player} />
 			)}
+
 			<Board />
 		</CenteredPanel>
 	);
