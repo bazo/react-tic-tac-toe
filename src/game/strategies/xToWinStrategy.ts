@@ -25,9 +25,6 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 	let consecutiveFields = [] as number[];
 
 	function checkRow(boardState: BoardState, player: Player, index: number): boolean {
-		if (player === Player.CIRCLE) {
-			return false;
-		}
 		const rowIndex = getRowIndex(boardState, index);
 		const min = rowsStartIndexes[rowIndex];
 		const max = min + size - 1;
@@ -35,11 +32,16 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		consecutiveFields = [index] as number[];
 
 		//check to the left of click
-		for (let i = index; i >= Math.max(min, index - toWin + 1); i--) {
-			if (boardState[i] !== player) {
+		for (let i = 1; i < toWin + 1; i++) {
+			const x = index - i;
+			if (x < min) {
+				break;
+			}
+
+			if (boardState[x] !== player) {
 				break;
 			} else {
-				consecutiveFields = addToArray(consecutiveFields, i);
+				consecutiveFields = addToArray(consecutiveFields, x);
 				if (consecutiveFields.length === toWin) {
 					return true;
 				}
@@ -47,11 +49,16 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		}
 
 		//check to the right of click
-		for (let i = index; i <= Math.min(max, index + toWin - consecutiveFields.length + 1); i++) {
-			if (boardState[i] !== player) {
+		for (let i = 1; i < toWin + 1; i++) {
+			const x = index + i;
+			if (x > max) {
+				break;
+			}
+
+			if (boardState[x] !== player) {
 				break;
 			} else {
-				consecutiveFields = addToArray(consecutiveFields, i);
+				consecutiveFields = addToArray(consecutiveFields, x);
 				if (consecutiveFields.length === toWin) {
 					return true;
 				}

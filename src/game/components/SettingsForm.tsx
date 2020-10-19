@@ -24,7 +24,7 @@ const SettingsForm: FC<Props> = ({ onSubmit, initialSettings }: Props) => {
 
 					<div>
 						<label>To win</label>
-						<Field name="toWin" component="input" type="number" min={3} placeholder="To win" parse={parseNumber} />
+						<Field name="toWin" component="input" type="number" min={3} max={values.size} placeholder="To win" parse={parseNumber} />
 					</div>
 
 					<div className="buttons">

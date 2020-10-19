@@ -25,7 +25,7 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 
 	const strategy = useMemo(() => {
 		if (settings.size === settings.toWin) {
-			return FullSizeStrategy(settings.size);
+			//return FullSizeStrategy(settings.size);
 		}
 
 		return XToWinStrategy(settings.size, settings.toWin);
