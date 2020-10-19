@@ -7,7 +7,7 @@ import { playerSymbol } from "./functions";
 import { Settings } from "./types";
 import useGame from "./useGame";
 
-const initialSettings = { size: 5 } as Settings;
+const initialSettings = { size: 5, toWin: 3 } as Settings;
 
 const Game: FC = () => {
 	const { board: Board, player, winner, isDraw, settings, setSettings, reset } = useGame(initialSettings);
@@ -20,8 +20,6 @@ const Game: FC = () => {
 		<CenteredPanel>
 			<h1>Tic Tac Toe</h1>
 
-			<PlayerIndicator player={player} />
-
 			<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
 
 			{winner || isDraw ? (
@@ -30,8 +28,9 @@ const Game: FC = () => {
 					<div onClick={reset}>Reset</div>
 				</>
 			) : (
-				<Board />
+				<PlayerIndicator player={player} />
 			)}
+			<Board />
 		</CenteredPanel>
 	);
 };

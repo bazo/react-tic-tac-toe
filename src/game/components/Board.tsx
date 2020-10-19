@@ -36,6 +36,10 @@ const BoardContainer = styled.div<ContainerProps>`
 		border-top: ${border};
 		border-right: ${border};
 
+		&.winning {
+			background-color: red;
+		}
+
 		span {
 			font-size: ${squareSize}px;
 			vertical-align: middle;
@@ -49,15 +53,16 @@ const BoardContainer = styled.div<ContainerProps>`
 
 interface Props {
 	state: BoardState;
+	winningFields: number[];
 	onClick: (index: number) => void;
 }
 
-const Board: FC<Props> = ({ state, onClick }: Props) => {
+const Board: FC<Props> = ({ state, winningFields, onClick }: Props) => {
 	return (
 		<BoardContainer size={getBoardSize(state)}>
 			{state.map((player, index) => {
 				return (
-					<div onClick={onClick.bind(null, index)} key={index}>
+					<div onClick={onClick.bind(null, index)} key={index} className={winningFields.includes(index) ? "winning" : undefined}>
 						<span className={player === Player.CIRCLE ? "circle" : "cross"}>{playerSymbol(player)}</span>
 					</div>
 				);

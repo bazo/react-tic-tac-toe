@@ -1,8 +1,9 @@
 import React, { Dispatch, FC, ReactElement, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 
 import Board from "./components/Board";
-import { checkWin, createBoard, getNextPlayer, isBoardFilled } from "./functions";
+import { createBoard, getNextPlayer, isBoardFilled } from "./functions";
 import FullSizeStrategy from "./strategies/fullSizeStrategy";
+import XToWinStrategy from "./strategies/xToWinStrategy";
 import { Player, Settings } from "./types";
 
 interface GameHandlers {
@@ -22,7 +23,13 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 	const [winner, setWinner] = useState((null as unknown) as Player);
 	const [isDraw, setDraw] = useState(false);
 
-	const strategy = useMemo(() => FullSizeStrategy(settings.size), [settings.size]);
+	const strategy = useMemo(() => {
+		if (settings.size === settings.toWin) {
+			return FullSizeStrategy(settings.size);
+		}
+
+		return XToWinStrategy(settings.size, settings.toWin);
+	}, [settings]);
 
 	const reset = useCallback(() => {
 		setPlayer(Player.CROSS);
@@ -36,11 +43,14 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 	}, [reset, settings.size]);
 
 	const handleSquareClick = (index: number): void => {
+		if (winner) {
+			return;
+		}
 		if (boardState[index] === undefined) {
 			boardState[index] = player;
 
 			const newBoard = [...boardState];
-			const isWin = checkWin(newBoard, player, index, strategy);
+			const isWin = strategy.checkWin(newBoard, player, index);
 			if (isWin) {
 				setWinner(player);
 				return;
@@ -55,7 +65,9 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 		}
 	};
 
-	const board: FC = (): ReactElement => <Board state={boardState} onClick={handleSquareClick} />;
+	const board: FC = (): ReactElement => (
+		<Board state={boardState} winningFields={winner ? strategy.getWinningFields() : []} onClick={handleSquareClick} />
+	);
 
 	return { board, player, winner, isDraw, settings, setSettings, reset };
 };

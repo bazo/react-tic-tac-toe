@@ -1,6 +1,6 @@
 import { repeat } from "ramda";
 
-import { BoardState, GameWinCheckStrategy, Player, SymbolText } from "./types";
+import { BoardState, Player, SymbolText } from "./types";
 
 export function createBoard(size: number): BoardState {
 	return repeat(undefined, Math.pow(size, 2));
@@ -8,26 +8,6 @@ export function createBoard(size: number): BoardState {
 
 export function getNextPlayer(currentPlayer: Player): Player {
 	return currentPlayer === Player.CROSS ? Player.CIRCLE : Player.CROSS;
-}
-
-export function checkWin(boardState: BoardState, currentPlayer: Player, index: number, strategy: GameWinCheckStrategy): boolean {
-	if (strategy.checkRow(boardState, currentPlayer, index)) {
-		return true;
-	}
-
-	if (strategy.checkColumn(boardState, currentPlayer, index)) {
-		return true;
-	}
-
-	if (isOnDiagonal(boardState, index) && strategy.checkDiagonal(boardState, currentPlayer, index)) {
-		return true;
-	}
-
-	if (isOnAntiDiagonal(boardState, index) && strategy.checkAntiDiagonal(boardState, currentPlayer, index)) {
-		return true;
-	}
-
-	return false;
 }
 
 export function isBoardFilled(boardState: BoardState): boolean {

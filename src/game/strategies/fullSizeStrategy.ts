@@ -11,6 +11,18 @@ function createColumnStartIndexes(size: number): number[] {
 	return times((i) => i, size);
 }
 
+function isOnDiagonal(index: number, size: number): boolean {
+	return index % (size + 1) === 0;
+}
+
+function isOnAntiDiagonal(index: number, size: number): boolean {
+	if (index === 0 || index === size - 1) {
+		return false;
+	}
+
+	return index % (size - 1) === 0;
+}
+
 const FullSizeStrategy = (size: number): GameWinCheckStrategy => {
 	const rowsStartIndexes = createRowStartIndexes(size);
 	const columnsStartIndexes = createColumnStartIndexes(size);
@@ -68,11 +80,33 @@ const FullSizeStrategy = (size: number): GameWinCheckStrategy => {
 		return true;
 	}
 
+	function checkWin(boardState: BoardState, currentPlayer: Player, index: number): boolean {
+		if (checkRow(boardState, currentPlayer, index)) {
+			return true;
+		}
+
+		if (checkColumn(boardState, currentPlayer, index)) {
+			return true;
+		}
+
+		if (isOnDiagonal(index, size) && checkDiagonal(boardState, currentPlayer)) {
+			return true;
+		}
+
+		if (isOnAntiDiagonal(index, size) && checkAntiDiagonal(boardState, currentPlayer)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	function getWinningFields(): number[] {
+		return [];
+	}
+
 	return {
-		checkRow,
-		checkColumn,
-		checkDiagonal,
-		checkAntiDiagonal,
+		checkWin,
+		getWinningFields,
 	};
 };
 

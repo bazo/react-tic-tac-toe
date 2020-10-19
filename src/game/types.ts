@@ -11,13 +11,12 @@ export enum Player {
 
 export interface Settings {
 	size: number;
+	toWin: number;
 }
 
 export type BoardState = (Player | undefined)[];
 
 export interface GameWinCheckStrategy {
-	checkColumn: (boardState: BoardState, player: Player, index: number) => boolean;
-	checkRow: (boardState: BoardState, player: Player, index: number) => boolean;
-	checkDiagonal: (boardState: BoardState, player: Player, index: number) => boolean;
-	checkAntiDiagonal: (boardState: BoardState, player: Player, index: number) => boolean;
+	checkWin: (boardState: BoardState, currentPlayer: Player, index: number) => boolean;
+	getWinningFields: () => number[];
 }
