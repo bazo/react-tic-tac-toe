@@ -2,20 +2,18 @@ import styled from "@emotion/styled";
 import React, { FC } from "react";
 
 import { getBoardSize, playerSymbol } from "../functions";
-import { BoardState, Player } from "../types";
+import { BoardState, Player, squareSize } from "../types";
 
 interface ContainerProps {
 	size: number;
 }
 
-const squareSize = 48;
 const borderWidth = 1;
-const border = `${borderWidth}px solid #ccc`;
+const border = `${borderWidth}px solid #333`;
 
 const BoardContainer = styled.div<ContainerProps>`
 	margin: 0 auto;
 	margin-top: 20px;
-	color: black;
 	display: flex;
 	flex-wrap: wrap;
 	width: ${({ size }): string => `${size * squareSize + borderWidth}px;`};

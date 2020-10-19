@@ -1,9 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 
-import CenteredPanel from "./components/CenteredPanel";
+import GamePanel from "./components/GamePanel";
 import PlayerIndicator from "./components/PlayerSymbol";
 import SettingsForm from "./components/SettingsForm";
-import { playerSymbol } from "./functions";
+import { calculateBoardSizeToFit, playerSymbol } from "./functions";
 import { Settings } from "./types";
 import useGame from "./useGame";
 
@@ -11,6 +11,10 @@ const initialSettings = { size: 5, toWin: 3 } as Settings;
 
 const Game: FC = () => {
 	const { board: Board, player, winner, isDraw, settings, setSettings, reset } = useGame(initialSettings);
+
+	useEffect(() => {
+		setSettings({ ...settings, size: calculateBoardSizeToFit() });
+	}, []);
 
 	const handleSettingsChange = (settings: Settings): void => {
 		setSettings(settings);
@@ -27,22 +31,27 @@ const Game: FC = () => {
 	};
 
 	return (
-		<CenteredPanel>
-			<h1>Tic Tac Toe</h1>
+		<GamePanel>
+			<header>
+				<h1>Tic Tac Toe</h1>
 
-			<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
-			<div onClick={handleResetClick}>Reset</div>
+				<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
+				<div>
+					<button onClick={handleResetClick} className="reset">
+						Reset
+					</button>
+				</div>
 
-			{winner || isDraw ? (
-				<>
-					<h2>{winner ? `Winner is ${playerSymbol(player)}` : "It's a draw"}</h2>
-				</>
-			) : (
-				<PlayerIndicator player={player} />
-			)}
-
+				{winner || isDraw ? (
+					<>
+						<h2>{winner ? `Winner is ${playerSymbol(player)}` : "It's a draw"}</h2>
+					</>
+				) : (
+					<PlayerIndicator player={player} />
+				)}
+			</header>
 			<Board />
-		</CenteredPanel>
+		</GamePanel>
 	);
 };
 

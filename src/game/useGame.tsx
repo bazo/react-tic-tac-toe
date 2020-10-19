@@ -35,7 +35,7 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 
 	useEffect(() => {
 		reset();
-	}, [reset, settings.size]);
+	}, [reset, settings]);
 
 	const handleSquareClick = (index: number): void => {
 		if (winner) {

@@ -20,3 +20,5 @@ export interface GameWinCheckStrategy {
 	checkWin: (boardState: BoardState, currentPlayer: Player, index: number) => boolean;
 	getWinningFields: () => number[];
 }
+
+export const squareSize = 48;
