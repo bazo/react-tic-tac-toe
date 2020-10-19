@@ -79,7 +79,7 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 
 		//check up from click
 		const startY = rowIndex * size + columnIndex;
-		for (let i = 0; i < toWin; i++) {
+		for (let i = 1; i < toWin + 1; i++) {
 			const y = startY - i * size;
 
 			if (y < min) {
@@ -97,7 +97,7 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		}
 
 		//check down from click
-		for (let i = 0; i <= toWin - consecutiveFields.length + 1; i++) {
+		for (let i = 1; i <= toWin - consecutiveFields.length + 1; i++) {
 			const y = startY + i * size;
 
 			if (y > max) {
@@ -128,7 +128,7 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		consecutiveFields = [index] as number[];
 
 		//check up left from click
-		for (let i = 1; i <= toWin; i++) {
+		for (let i = 1; i <= toWin + 1; i++) {
 			const rowIndex = startRowIndex - i;
 			const columnIndex = startColumnIndex - i;
 			if (rowIndex < 0 || columnIndex < 0) {
@@ -175,7 +175,7 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		consecutiveFields = [index] as number[];
 
 		//check up right from click
-		for (let i = 1; i <= toWin; i++) {
+		for (let i = 1; i <= toWin + 1; i++) {
 			const rowIndex = startRowIndex - i;
 			const columnIndex = startColumnIndex + i;
 
