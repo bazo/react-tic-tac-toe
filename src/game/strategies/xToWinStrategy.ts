@@ -49,7 +49,8 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		}
 
 		//check to the right of click
-		for (let i = 1; i < toWin + 1; i++) {
+		const iMax = toWin - consecutiveFields.length + 1;
+		for (let i = 1; i < iMax; i++) {
 			const x = index + i;
 			if (x > max) {
 				break;
@@ -78,18 +79,18 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		consecutiveFields = [index] as number[];
 
 		//check up from click
-		const startY = rowIndex * size + columnIndex;
+		const startX = rowIndex * size + columnIndex;
 		for (let i = 1; i < toWin + 1; i++) {
-			const y = startY - i * size;
+			const x = startX - i * size;
 
-			if (y < min) {
+			if (x < min) {
 				break;
 			}
 
-			if (boardState[y] !== player) {
+			if (boardState[x] !== player) {
 				break;
 			} else {
-				consecutiveFields = addToArray(consecutiveFields, y);
+				consecutiveFields = addToArray(consecutiveFields, x);
 				if (consecutiveFields.length === toWin) {
 					return true;
 				}
@@ -97,17 +98,18 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		}
 
 		//check down from click
-		for (let i = 1; i <= toWin - consecutiveFields.length + 1; i++) {
-			const y = startY + i * size;
+		const iMax = toWin - consecutiveFields.length + 1;
+		for (let i = 1; i < iMax; i++) {
+			const x = startX + i * size;
 
-			if (y > max) {
+			if (x > max) {
 				break;
 			}
 
-			if (boardState[y] !== player) {
+			if (boardState[x] !== player) {
 				break;
 			} else {
-				consecutiveFields = addToArray(consecutiveFields, y);
+				consecutiveFields = addToArray(consecutiveFields, x);
 				if (consecutiveFields.length === toWin) {
 					return true;
 				}
@@ -147,9 +149,11 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		}
 
 		//check right down from click
-		for (let i = 1; i <= toWin - consecutiveFields.length + 1; i++) {
+		const iMax = toWin - consecutiveFields.length + 1;
+		for (let i = 1; i < iMax; i++) {
 			const rowIndex = startRowIndex + i;
 			const columnIndex = startColumnIndex + i;
+
 			if (rowIndex > size - 1 || columnIndex > size - 1) {
 				break;
 			}
@@ -195,7 +199,8 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		}
 
 		//check left down from click
-		for (let i = 1; i <= toWin - consecutiveFields.length + 1; i++) {
+		const iMax = toWin - consecutiveFields.length + 1;
+		for (let i = 1; i < iMax; i++) {
 			const rowIndex = startRowIndex + i;
 			const columnIndex = startColumnIndex - i;
 
