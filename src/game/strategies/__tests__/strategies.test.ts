@@ -1,14 +1,13 @@
-import { checkWin } from "../../functions";
 import { Player } from "../../types";
 import FullSizeStrategy from "../fullSizeStrategy";
 
 describe("FullSizeStrategy", () => {
 	const strategy = FullSizeStrategy(3);
 
-	test("checkWin", () => {
+	test("strategy.checkWin", () => {
 		const boardWinColumnX = [Player.CROSS, Player.CIRCLE, undefined, Player.CROSS, Player.CIRCLE, undefined, Player.CROSS, undefined, undefined];
-		expect(checkWin(boardWinColumnX, Player.CROSS, 6, strategy)).toBeTruthy();
-		expect(checkWin(boardWinColumnX, Player.CIRCLE, 4, strategy)).toBeFalsy();
+		expect(strategy.checkWin(boardWinColumnX, Player.CROSS, 6)).toBeTruthy();
+		expect(strategy.checkWin(boardWinColumnX, Player.CIRCLE, 4)).toBeFalsy();
 
 		const boardWinColumnY = [
 			Player.CROSS,
@@ -21,14 +20,14 @@ describe("FullSizeStrategy", () => {
 			Player.CIRCLE,
 			Player.CROSS,
 		];
-		expect(checkWin(boardWinColumnY, Player.CIRCLE, 7, strategy)).toBeTruthy();
-		expect(checkWin(boardWinColumnY, Player.CROSS, 0, strategy)).toBeFalsy();
+		expect(strategy.checkWin(boardWinColumnY, Player.CIRCLE, 7)).toBeTruthy();
+		expect(strategy.checkWin(boardWinColumnY, Player.CROSS, 0)).toBeFalsy();
 
 		const boardWinRowX = [Player.CROSS, Player.CROSS, Player.CROSS, Player.CIRCLE, Player.CIRCLE, undefined, undefined, undefined, undefined];
-		expect(checkWin(boardWinRowX, Player.CROSS, 2, strategy)).toBeTruthy();
+		expect(strategy.checkWin(boardWinRowX, Player.CROSS, 2)).toBeTruthy();
 
 		const boardWinRowY = [Player.CROSS, undefined, undefined, Player.CROSS, Player.CROSS, undefined, Player.CIRCLE, Player.CIRCLE, Player.CIRCLE];
-		expect(checkWin(boardWinRowY, Player.CIRCLE, 6, strategy)).toBeTruthy();
+		expect(strategy.checkWin(boardWinRowY, Player.CIRCLE, 6)).toBeTruthy();
 
 		const boardWinDiagonalX = [
 			Player.CROSS,
@@ -41,6 +40,6 @@ describe("FullSizeStrategy", () => {
 			undefined,
 			Player.CROSS,
 		];
-		expect(checkWin(boardWinDiagonalX, Player.CROSS, 8, strategy)).toBeTruthy();
+		expect(strategy.checkWin(boardWinDiagonalX, Player.CROSS, 8)).toBeTruthy();
 	});
 });
