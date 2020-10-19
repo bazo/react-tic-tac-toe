@@ -2,7 +2,6 @@ import React, { Dispatch, FC, ReactElement, SetStateAction, useCallback, useEffe
 
 import Board from "./components/Board";
 import { createBoard, getNextPlayer, isBoardFilled } from "./functions";
-import FullSizeStrategy from "./strategies/fullSizeStrategy";
 import XToWinStrategy from "./strategies/xToWinStrategy";
 import { Player, Settings } from "./types";
 
@@ -24,10 +23,6 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 	const [isDraw, setDraw] = useState(false);
 
 	const strategy = useMemo(() => {
-		if (settings.size === settings.toWin) {
-			//return FullSizeStrategy(settings.size);
-		}
-
 		return XToWinStrategy(settings.size, settings.toWin);
 	}, [settings]);
 
