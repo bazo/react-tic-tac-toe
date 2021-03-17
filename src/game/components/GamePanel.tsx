@@ -1,4 +1,4 @@
-import { css, Global } from "@emotion/core";
+import { css, Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import emotionReset from "emotion-reset";
 import React, { FC, ReactNode } from "react";

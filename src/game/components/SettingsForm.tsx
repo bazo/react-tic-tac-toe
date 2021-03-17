@@ -53,7 +53,7 @@ const SettingsForm: FC<Props> = ({ onSubmit, initialSettings, className }: Props
 		<Form
 			onSubmit={onSubmit}
 			initialValues={initialSettings}
-			render={({ handleSubmit, form, submitting, pristine, values }): ReactElement => (
+			render={({ handleSubmit, submitting, pristine, values }): ReactElement => (
 				<StyledForm onSubmit={handleSubmit} className={className}>
 					<div>
 						<label>Size</label>

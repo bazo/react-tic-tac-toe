@@ -1,14 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import Game from "game/Game";
+import React, { StrictMode } from "react";
+import { render } from "react-dom";
 
-import Game from "./game/Game";
-import * as serviceWorker from "./serviceWorker";
-
-ReactDOM.render(
-	<React.StrictMode>
+render(
+	<StrictMode>
 		<Game />
-	</React.StrictMode>,
+	</StrictMode>,
 	document.getElementById("root")
 );
-
-serviceWorker.register();

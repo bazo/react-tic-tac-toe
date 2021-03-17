@@ -1,4 +1,13 @@
+/* eslint-env node */
+/**
+ * @type {import("eslint").Linter.Config}
+ */
 module.exports = {
+	env: {
+		browser: true,
+		es2021: true,
+	},
+	extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "plugin:prettier/recommended"],
 	parser: "@typescript-eslint/parser",
 	parserOptions: {
 		ecmaFeatures: {
@@ -7,36 +16,24 @@ module.exports = {
 		ecmaVersion: 2020,
 		sourceType: "module",
 	},
-	env: {
-		browser: true,
-		es6: true,
-	},
-	extends: [
-		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:react/recommended",
-		"react-app",
-		"plugin:prettier/recommended",
-		"prettier/@typescript-eslint",
-		"prettier/react",
-		"prettier/standard",
-	],
+	plugins: ["react", "@typescript-eslint", "prettier", "eslint-plugin-simple-import-sort", "import"],
 	settings: {
 		react: {
-			version: "detect",
+			version: "17",
 		},
 	},
-	plugins: ["react", "@typescript-eslint", "prettier", "jest", "eslint-plugin-simple-import-sort", "import"],
 	rules: {
-		"simple-import-sort/sort": "error",
+		"simple-import-sort/imports": "error",
 		"sort-imports": "off",
 		"import/order": "off",
 		"import/first": "error",
 		"import/newline-after-import": "error",
 		"import/no-duplicates": "error",
-		"react-hooks/exhaustive-deps": "warn",
-		"@typescript-eslint/ban-ts-ignore": "warn",
-		"@typescript-eslint/ban-ts-comment": "warn",
-		"react/prop-types": "warn",
-	},
+		"react/react-in-jsx-scope": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "error",
+		"no-console": "warn",
+		"no-undef": "off",
+		"react-hooks/exhaustive-deps": "off",
+		"react/prop-types": "off",
+	}
 };

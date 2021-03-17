@@ -6,7 +6,7 @@ import XToWinStrategy from "./strategies/xToWinStrategy";
 import { Player, Settings } from "./types";
 
 interface GameHandlers {
-	board: FC<{}>;
+	board: FC;
 	player: Player;
 	winner: Player;
 	isDraw: boolean;
