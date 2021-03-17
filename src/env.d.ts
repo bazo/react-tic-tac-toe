@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-namespace */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/// <reference types="expect/build/types" />
 
-/// <reference types="node" />
-
-import { Expect } from "expect/build/types";
-
-export declare const describe: testing.Describe;
-export declare const test: testing.Test;
-export declare const expect: Expect;
+declare const describe: testing.Describe;
+declare const test: testing.Test;
+declare const expect: Expect;
 
 declare namespace testing {
 	interface FunctionLike {

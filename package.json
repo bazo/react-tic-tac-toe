@@ -15,7 +15,7 @@
 		]
 	},
 	"dependencies": {
-		"@bazo/js-dev-scripts": "^0.1.12",
+		"@bazo/js-dev-scripts": "^0.1.13",
 		"@emotion/react": "^11.1.5",
 		"@emotion/styled": "^11.1.5",
 		"@types/node": "^14.14.35",

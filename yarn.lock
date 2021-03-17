@@ -75,10 +75,10 @@
   resolved "https://registry.yarnpkg.com/@bazo/js-dev-scripts-types/-/js-dev-scripts-types-0.0.22.tgz#c05ab34bb27cd4f89af79647b3b4593145a20d6e"
   integrity sha512-PYfdOKKA1AyVz6a9kA3mOAEAk6USK3RH+lFw8NFtHXnXZ8NC3VBVDwVMgcwov7MbnbL3BnR8/Bs2nN1RCSR27g==
 
-"@bazo/js-dev-scripts@^0.1.12":
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/@bazo/js-dev-scripts/-/js-dev-scripts-0.1.12.tgz#af4a3f84acf06341ba90ed3c4015af3d2185b71d"
-  integrity sha512-dG3h6cZrqMiePDDaUuqYQcm28pfW7yD4UwcLjLRoh3eiy+wFWBjwU3hfCTnBBDjyXDOvrovQFYCENoUj7Ll07Q==
+"@bazo/js-dev-scripts@^0.1.13":
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@bazo/js-dev-scripts/-/js-dev-scripts-0.1.13.tgz#0a37b5a5226fa7dbc9dbf2e6ce5832a5bceb8672"
+  integrity sha512-aH7FKPIc/wZ+bVxSVMSsnFQt7BBPeGV/cMj8a+myGkH3kTxVVLgxOlH3dv257Gj1w8IiPh2pExgIiaMm/flzsQ==
   dependencies:
     "@bazo/js-dev-overlay" "^0.0.29"
     "@bazo/js-dev-scripts-types" "^0.0.22"
