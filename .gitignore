@@ -5,3 +5,5 @@ build
 .tmp/
 routeTree.gen.ts
 dist
+.env
+.env.local

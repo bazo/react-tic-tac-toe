@@ -4,6 +4,15 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "./components/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import ThirdParty, {
+	Google,
+	Github,
+	Apple,
+} from "supertokens-auth-react/recipe/thirdparty";
+import Session from "supertokens-auth-react/recipe/session";
+import { env } from "./env";
 import "./style.css";
 
 // Register things for typesafety
@@ -21,12 +30,40 @@ const router = createRouter({
 
 const queryClient = new QueryClient();
 
+SuperTokens.init({
+	appInfo: {
+		appName: env.VITE_APP_NAME,
+		apiDomain: env.VITE_API_DOMAIN,
+		websiteDomain: env.VITE_WEBSITE_DOMAIN,
+		apiBasePath: "/auth",
+		websiteBasePath: "/auth",
+	},
+
+	recipeList: [
+		EmailPassword.init(),
+		ThirdParty.init({
+			signInAndUpFeature: {
+				providers: [Google.init(), Github.init(), Apple.init()],
+			},
+		}),
+		Session.init(),
+	],
+
+	getRedirectionURL: async (context) => {
+		if (context.action === "SUCCESS" && context.newSessionCreated) {
+			return "/game";
+		}
+	},
+});
+
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<ThemeProvider defaultTheme="system">
-			<QueryClientProvider client={queryClient}>
-				<RouterProvider router={router} />
-			</QueryClientProvider>
-		</ThemeProvider>
+		<SuperTokensWrapper>
+			<ThemeProvider defaultTheme="system">
+				<QueryClientProvider client={queryClient}>
+					<RouterProvider router={router} />
+				</QueryClientProvider>
+			</ThemeProvider>
+		</SuperTokensWrapper>
 	</StrictMode>,
 );

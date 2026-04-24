@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import Session from "supertokens-auth-react/recipe/session";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
 
 const linkClass =
 	"rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
@@ -12,6 +15,16 @@ interface Props {
 }
 
 export function Layout({ children }: Props) {
+	const session = useSessionContext();
+	const navigate = useNavigate();
+
+	const isLoggedIn = !session.loading && session.doesSessionExist;
+
+	const handleLogout = async () => {
+		await Session.signOut();
+		navigate({ to: "/auth" });
+	};
+
 	return (
 		<div className="min-h-screen bg-background text-foreground">
 			<header className="border-b border-border">
@@ -31,13 +44,24 @@ export function Layout({ children }: Props) {
 						>
 							Game
 						</Link>
-						<Link
-							to="/login"
-							className={linkClass}
-							activeProps={{ className: activeLinkClass }}
-						>
-							Login
-						</Link>
+						{!session.loading &&
+							(isLoggedIn ? (
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={handleLogout}
+								>
+									Logout
+								</Button>
+							) : (
+								<Link
+									to="/auth"
+									className={linkClass}
+									activeProps={{ className: activeLinkClass }}
+								>
+									Login
+								</Link>
+							))}
 					</div>
 
 					<div className="ml-auto">
