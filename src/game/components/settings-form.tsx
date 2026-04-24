@@ -101,20 +101,25 @@ export function SettingsForm({ onSubmit, initialSettings, className }: Props) {
 						return (
 							<>
 								<label htmlFor={field.name}>To win</label>
-								<input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) =>
-										field.handleChange(
-											parseNumber(e.target.value),
-										)
-									}
-									type="number"
-									min={3}
-									max={field.form.state.values.size}
-									placeholder="To win"
+								<form.Subscribe
+									selector={(state) => state.values.size}
+									children={(size) => (
+										<input
+											id={field.name}
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) =>
+												field.handleChange(
+													parseNumber(e.target.value),
+												)
+											}
+											type="number"
+											min={3}
+											max={size}
+											placeholder="To win"
+										/>
+									)}
 								/>
 							</>
 						);
