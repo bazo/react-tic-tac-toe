@@ -50,10 +50,9 @@ export function isOnAntiDiagonal(boardState: BoardState, index: number): boolean
 	return index % (size - 1) === 0;
 }
 
-export function calculateBoardSizeToFit(): number {
-	const headerEl = document.getElementsByTagName("header")[0];
+export function calculateBoardSizeToFit(usedHeight: number): number {
 	const pixels = Math.min(
-		window.innerHeight - headerEl.getBoundingClientRect().height - 20,
+		window.innerHeight - usedHeight - 20,
 		window.innerWidth - 20,
 	);
 

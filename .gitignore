@@ -3,3 +3,4 @@ temp
 *.log
 build
 .tmp/
+routeTree.gen.ts
