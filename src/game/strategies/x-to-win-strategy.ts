@@ -1,7 +1,7 @@
 import { times } from "ramda";
 
 import { getColumnIndex, getRowIndex } from "../functions";
-import { BoardState, GameWinCheckStrategy, Player } from "../types";
+import { type BoardState, type GameWinCheckStrategy, Player } from "../types";
 
 function createRowStartIndexes(size: number): number[] {
 	return times((i) => i * size, size);

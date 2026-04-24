@@ -1,7 +1,7 @@
 import { css, Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import emotionReset from "emotion-reset";
-import React, { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const CenteredPanel = styled.div`
 	margin: 0 auto;
@@ -13,7 +13,7 @@ interface Props {
 	children: ReactNode;
 }
 
-const GamePanel: FC<Props> = ({ children }: Props) => {
+export function GamePanel({ children }: Props) {
 	return (
 		<>
 			<Global
@@ -55,7 +55,10 @@ const GamePanel: FC<Props> = ({ children }: Props) => {
 						font-size: 1rem;
 						line-height: 1.5;
 						border-radius: 0.25rem;
-						transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+						transition:
+							color 0.15s ease-in-out,
+							background-color 0.15s ease-in-out,
+							border-color 0.15s ease-in-out,
 							box-shadow 0.15s ease-in-out;
 					}
 				`}
@@ -63,6 +66,6 @@ const GamePanel: FC<Props> = ({ children }: Props) => {
 			<CenteredPanel>{children}</CenteredPanel>
 		</>
 	);
-};
+}
 
 export default GamePanel;

@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import React, { FC } from "react";
 
 import { getBoardSize, playerSymbol } from "../functions";
-import { BoardState, Player, squareSize } from "../types";
+import { type BoardState, Player, squareSize } from "../types";
 
 interface ContainerProps {
 	size: number;
@@ -55,13 +54,19 @@ interface Props {
 	onClick: (index: number) => void;
 }
 
-const Board: FC<Props> = ({ state, winningFields, onClick }: Props) => {
+export function Board({ state, winningFields, onClick }: Props) {
 	return (
 		<BoardContainer size={getBoardSize(state)}>
 			{state.map((player, index) => {
 				return (
-					<div onClick={onClick.bind(null, index)} key={index} className={winningFields.includes(index) ? "winning" : undefined}>
-						<span className={player === Player.CIRCLE ? "circle" : "cross"}>{playerSymbol(player)}</span>
+					<div
+						onClick={onClick.bind(null, index)}
+						key={index}
+						className={winningFields.includes(index) ? "winning" : undefined}
+					>
+						<span className={player === Player.CIRCLE ? "circle" : "cross"}>
+							{playerSymbol(player)}
+						</span>
 					</div>
 				);
 			})}

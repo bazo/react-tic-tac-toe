@@ -1,9 +1,18 @@
-import React, { Dispatch, FC, ReactElement, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import {
+	type Dispatch,
+	type FC,
+	type ReactElement,
+	type SetStateAction,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 
-import Board from "./components/Board";
+import Board from "./components/board";
 import { createBoard, getNextPlayer, isBoardFilled } from "./functions";
-import XToWinStrategy from "./strategies/xToWinStrategy";
-import { Player, Settings } from "./types";
+import XToWinStrategy from "./strategies/x-to-win-strategy";
+import { Player, type Settings } from "./types";
 
 interface GameHandlers {
 	board: FC;
@@ -18,8 +27,8 @@ interface GameHandlers {
 const useGame = (initialSettings: Settings): GameHandlers => {
 	const [settings, setSettings] = useState(initialSettings);
 	const [boardState, setBoardState] = useState(createBoard(settings.size));
-	const [player, setPlayer] = useState(Player.CROSS);
-	const [winner, setWinner] = useState((null as unknown) as Player);
+	const [player, setPlayer] = useState<Player>(Player.CROSS);
+	const [winner, setWinner] = useState<Player>(null as unknown as Player);
 	const [isDraw, setDraw] = useState(false);
 
 	const strategy = useMemo(() => {
@@ -29,7 +38,7 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 	const reset = useCallback(() => {
 		setPlayer(Player.CROSS);
 		setBoardState(createBoard(settings.size));
-		setWinner((null as unknown) as Player);
+		setWinner(null as unknown as Player);
 		setDraw(false);
 	}, [settings.size]);
 
@@ -60,8 +69,12 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 		}
 	};
 
-	const board: FC = (): ReactElement => (
-		<Board state={boardState} winningFields={winner ? strategy.getWinningFields() : []} onClick={handleSquareClick} />
+	const board: () => ReactElement = () => (
+		<Board
+			state={boardState}
+			winningFields={winner ? strategy.getWinningFields() : []}
+			onClick={handleSquareClick}
+		/>
 	);
 
 	return { board, player, winner, isDraw, settings, setSettings, reset };

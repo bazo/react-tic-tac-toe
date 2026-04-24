@@ -1,6 +1,6 @@
 import { repeat } from "ramda";
 
-import { BoardState, Player, squareSize, SymbolText } from "./types";
+import { type BoardState, Player, squareSize, SymbolText } from "./types";
 
 export function createBoard(size: number): BoardState {
 	return repeat(undefined, Math.pow(size, 2));
@@ -52,7 +52,10 @@ export function isOnAntiDiagonal(boardState: BoardState, index: number): boolean
 
 export function calculateBoardSizeToFit(): number {
 	const headerEl = document.getElementsByTagName("header")[0];
-	const pixels = Math.min(window.innerHeight - headerEl.getBoundingClientRect().height - 20, window.innerWidth - 20);
+	const pixels = Math.min(
+		window.innerHeight - headerEl.getBoundingClientRect().height - 20,
+		window.innerWidth - 20,
+	);
 
 	return Math.floor(pixels / squareSize);
 }

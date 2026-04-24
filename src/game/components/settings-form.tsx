@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import React, { FC, ReactElement } from "react";
 import { Field, Form } from "react-final-form";
 
-import { Settings } from "../types";
+import type { Settings } from "../types";
 
 const StyledForm = styled.form`
 	display: flex;
@@ -31,7 +30,11 @@ const StyledForm = styled.form`
 			border-color: #007bff;
 			vertical-align: middle;
 			border-radius: 0.25rem;
-			transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			transition:
+				color 0.15s ease-in-out,
+				background-color 0.15s ease-in-out,
+				border-color 0.15s ease-in-out,
+				box-shadow 0.15s ease-in-out;
 
 			&[disabled] {
 				color: #ccc;
@@ -48,21 +51,36 @@ interface Props {
 
 const parseNumber = (value: string): number => parseInt(value);
 
-const SettingsForm: FC<Props> = ({ onSubmit, initialSettings, className }: Props) => {
+export function SettingsForm({ onSubmit, initialSettings, className }: Props) {
 	return (
 		<Form
 			onSubmit={onSubmit}
 			initialValues={initialSettings}
-			render={({ handleSubmit, submitting, pristine, values }): ReactElement => (
+			render={({ handleSubmit, submitting, pristine, values }) => (
 				<StyledForm onSubmit={handleSubmit} className={className}>
 					<div>
 						<label>Size</label>
-						<Field name="size" component="input" type="number" min={3} placeholder="Size" parse={parseNumber} />
+						<Field
+							name="size"
+							component="input"
+							type="number"
+							min={3}
+							placeholder="Size"
+							parse={parseNumber}
+						/>
 					</div>
 
 					<div>
 						<label>To win</label>
-						<Field name="toWin" component="input" type="number" min={3} max={values.size} placeholder="To win" parse={parseNumber} />
+						<Field
+							name="toWin"
+							component="input"
+							type="number"
+							min={3}
+							max={values?.size || 3}
+							placeholder="To win"
+							parse={parseNumber}
+						/>
 					</div>
 
 					<div className="buttons">
@@ -74,6 +92,6 @@ const SettingsForm: FC<Props> = ({ onSubmit, initialSettings, className }: Props
 			)}
 		/>
 	);
-};
+}
 
 export default SettingsForm;

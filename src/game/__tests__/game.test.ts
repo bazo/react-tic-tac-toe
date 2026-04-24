@@ -1,4 +1,12 @@
-import { createBoard, getBoardSize, getNextPlayer, isBoardFilled, playerSymbol } from "../functions";
+import { describe, expect, test } from "vitest";
+
+import {
+	createBoard,
+	getBoardSize,
+	getNextPlayer,
+	isBoardFilled,
+	playerSymbol,
+} from "../functions";
 import { Player, SymbolText } from "../types";
 
 describe("game", () => {
@@ -36,7 +44,7 @@ describe("game", () => {
 				Player.CIRCLE,
 				Player.CROSS,
 				Player.CIRCLE,
-			])
+			]),
 		).toBeTruthy();
 	});
 });

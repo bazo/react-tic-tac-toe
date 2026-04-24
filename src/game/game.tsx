@@ -1,19 +1,27 @@
-import React, { FC, useEffect } from "react";
-
-import GamePanel from "./components/GamePanel";
-import PlayerIndicator from "./components/PlayerSymbol";
-import SettingsForm from "./components/SettingsForm";
+import { useEffect } from "react";
+import GamePanel from "./components/game-panel";
+import PlayerIndicator from "./components/player-symbol";
+import SettingsForm from "./components/settings-form";
 import { calculateBoardSizeToFit, playerSymbol } from "./functions";
-import { Settings } from "./types";
+import type { Settings } from "./types";
 import useGame from "./useGame";
 
 const initialSettings = { size: 5, toWin: 3 } as Settings;
 
-const Game: FC = () => {
-	const { board: Board, player, winner, isDraw, settings, setSettings, reset } = useGame(initialSettings);
+export function Game() {
+	const {
+		board: Board,
+		player,
+		winner,
+		isDraw,
+		settings,
+		setSettings,
+		reset,
+	} = useGame(initialSettings);
 
 	useEffect(() => {
 		setSettings({ ...settings, size: calculateBoardSizeToFit() });
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSettingsChange = (settings: Settings): void => {
@@ -35,7 +43,10 @@ const Game: FC = () => {
 			<header>
 				<h1>Tic Tac Toe</h1>
 
-				<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
+				<SettingsForm
+					onSubmit={handleSettingsChange}
+					initialSettings={settings}
+				/>
 				<div>
 					<button onClick={handleResetClick} className="reset">
 						Reset
@@ -44,7 +55,11 @@ const Game: FC = () => {
 
 				{winner || isDraw ? (
 					<>
-						<h2>{winner ? `Winner is ${playerSymbol(player)}` : "It's a draw"}</h2>
+						<h2>
+							{winner
+								? `Winner is ${playerSymbol(player)}`
+								: "It's a draw"}
+						</h2>
 					</>
 				) : (
 					<PlayerIndicator player={player} />
@@ -53,6 +68,6 @@ const Game: FC = () => {
 			<Board />
 		</GamePanel>
 	);
-};
+}
 
 export default Game;
