@@ -1,6 +1,6 @@
 {
 	"name": "react-tic-tac-toe",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -9,13 +9,15 @@
 		"format": "oxfmt .",
 		"lint": "oxlint -c .oxlintrc.json",
 		"preview": "vite preview",
-		"serve": "serve build"
+		"serve": "serve build",
+		"test": "vitest"
 	},
 	"dependencies": {
 		"@babel/core": "^7.29.0",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@rolldown/plugin-babel": "^0.2.3",
+		"@tanstack/react-form": "^1.29.1",
 		"@types/babel__core": "^7.20.5",
 		"@types/node": "^25.6.0",
 		"@types/ramda": "^0.31.1",
@@ -24,17 +26,14 @@
 		"@vitejs/plugin-react": "^6.0.1",
 		"babel-plugin-react-compiler": "^1.0.0",
 		"emotion-reset": "^3.0.1",
-		"eslint": "^10.2.1",
 		"eslint-plugin-react-hooks": "^7.1.1",
 		"eslint-plugin-react-refresh": "^0.5.2",
-		"final-form": "^5.0.0",
 		"globals": "^17.5.0",
 		"oxfmt": "0.46.0",
 		"oxlint": "1.61.0",
 		"ramda": "^0.32.0",
 		"react": "^19.2.5",
 		"react-dom": "^19.2.5",
-		"react-final-form": "^7.0.0",
 		"serve": "^14.2.6",
 		"typescript": "~6.0.3",
 		"vite": "^8.0.10",

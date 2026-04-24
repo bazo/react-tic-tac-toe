@@ -4,7 +4,7 @@ import PlayerIndicator from "./components/player-symbol";
 import SettingsForm from "./components/settings-form";
 import { calculateBoardSizeToFit, playerSymbol } from "./functions";
 import type { Settings } from "./types";
-import useGame from "./useGame";
+import useGame from "./use-game";
 
 const initialSettings = { size: 5, toWin: 3 } as Settings;
 

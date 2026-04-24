@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
-import { Field, Form } from "react-final-form";
-
+import { useForm } from "@tanstack/react-form";
 import type { Settings } from "../types";
 
 const StyledForm = styled.form`
@@ -52,45 +51,88 @@ interface Props {
 const parseNumber = (value: string): number => parseInt(value);
 
 export function SettingsForm({ onSubmit, initialSettings, className }: Props) {
+	const form = useForm({
+		defaultValues: initialSettings,
+		onSubmit: async ({ value }) => {
+			onSubmit(value);
+		},
+	});
+
 	return (
-		<Form
-			onSubmit={onSubmit}
-			initialValues={initialSettings}
-			render={({ handleSubmit, submitting, pristine, values }) => (
-				<StyledForm onSubmit={handleSubmit} className={className}>
-					<div>
-						<label>Size</label>
-						<Field
-							name="size"
-							component="input"
-							type="number"
-							min={3}
-							placeholder="Size"
-							parse={parseNumber}
-						/>
-					</div>
+		<StyledForm
+			onSubmit={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				form.handleSubmit();
+			}}
+			className={className}
+		>
+			<div>
+				<form.Field
+					name="size"
+					children={(field) => {
+						return (
+							<>
+								<label htmlFor={field.name}>Size</label>
+								<input
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) =>
+										field.handleChange(
+											parseNumber(e.target.value),
+										)
+									}
+									type="number"
+									min={3}
+									placeholder="Size"
+								/>
+							</>
+						);
+					}}
+				/>
+			</div>
 
-					<div>
-						<label>To win</label>
-						<Field
-							name="toWin"
-							component="input"
-							type="number"
-							min={3}
-							max={values?.size || 3}
-							placeholder="To win"
-							parse={parseNumber}
-						/>
-					</div>
+			<div>
+				<form.Field
+					name="toWin"
+					children={(field) => {
+						return (
+							<>
+								<label htmlFor={field.name}>To win</label>
+								<input
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) =>
+										field.handleChange(
+											parseNumber(e.target.value),
+										)
+									}
+									type="number"
+									min={3}
+									max={field.form.state.values.size}
+									placeholder="To win"
+								/>
+							</>
+						);
+					}}
+				/>
+			</div>
 
+			<form.Subscribe
+				selector={(state) => [state.canSubmit, state.isSubmitting]}
+				children={([canSubmit, isSubmitting]) => (
 					<div className="buttons">
-						<button type="submit" disabled={submitting || pristine}>
-							OK
+						<button type="submit" disabled={!canSubmit}>
+							{isSubmitting ? "..." : "Ok"}
 						</button>
 					</div>
-				</StyledForm>
-			)}
-		/>
+				)}
+			/>
+		</StyledForm>
 	);
 }
 
