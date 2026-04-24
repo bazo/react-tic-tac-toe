@@ -4,3 +4,4 @@ temp
 build
 .tmp/
 routeTree.gen.ts
+dist
