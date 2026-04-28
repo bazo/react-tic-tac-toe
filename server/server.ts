@@ -10,12 +10,19 @@ import {
 import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
 import Session from "supertokens-node/recipe/session";
 import type { SessionRequest } from "supertokens-node/framework/fastify";
-import { CreateRoomSchema, UpdateProfileSchema } from "shared/schemas";
+import {
+	CreateGameSchema,
+	PlayerMoveSchema,
+	GameSchema,
+	UpdateProfileSchema,
+} from "shared/schemas";
 import { env } from "./env";
 import { supertokensConfig } from "./supertokens";
 import { createDbConnection } from "./db/client";
 import websocket from "@fastify/websocket";
-
+import { createBoard } from "shared/game/functions";
+import { getNextBoardState, getPlayerData } from "shared/game/online";
+import z from "zod";
 supertokens.init(supertokensConfig);
 
 const server = Fastify();
@@ -123,13 +130,13 @@ server.put("/api/me", {
 	},
 });
 
-server.get("/api/rooms", {
+server.get("/api/games", {
 	preHandler: async (request, reply) => {
 		return verifySession()(request, reply);
 	},
 	handler: async (request: SessionRequest, _reply) => {
 		const session = request.session!;
-		return db.room.findMany({
+		return db.game.findMany({
 			where: {
 				OR: [
 					{ creatorId: session.getUserId() },
@@ -145,13 +152,13 @@ server.get("/api/rooms", {
 	},
 });
 
-server.post("/api/rooms", {
+server.post("/api/games", {
 	preHandler: async (request, reply) => {
 		return verifySession()(request, reply);
 	},
 	handler: async (request: SessionRequest, reply) => {
 		const session = request.session!;
-		const body = CreateRoomSchema.parse(JSON.parse(request.body));
+		const body = CreateGameSchema.parse(JSON.parse(request.body));
 
 		const owner = await db.user.findUnique({ where: { id: session.getUserId() } });
 		if (!owner) {
@@ -161,7 +168,7 @@ server.post("/api/rooms", {
 				.send({ error: "Owner not found" });
 		}
 
-		const room = await db.room.create({
+		const game = await db.game.create({
 			data: {
 				name: body.name,
 				size: body.size,
@@ -171,11 +178,11 @@ server.post("/api/rooms", {
 			},
 		});
 
-		return room;
+		return game;
 	},
 });
 
-server.post("/api/rooms/:roomId", {
+server.post("/api/games/:gameId", {
 	preHandler: async (request, reply) => {
 		return verifySession()(request, reply);
 	},
@@ -183,15 +190,15 @@ server.post("/api/rooms/:roomId", {
 		const session = request.session!;
 
 		//@ts-ignore - supertokens types are wrong about this
-		const { roomId } = request.params;
+		const { gameId } = request.params;
 
-		let room = await db.room.findUnique({ where: { id: roomId } });
+		let game = await db.game.findUnique({ where: { id: gameId } });
 
-		if (!room) {
+		if (!game) {
 			return reply
 				.code(400)
 				.header("Content-Type", "application/json; charset=utf-8")
-				.send({ error: "Room not found" });
+				.send({ error: "Game not found" });
 		}
 
 		const user = await db.user.findUnique({ where: { id: session.getUserId() } });
@@ -202,17 +209,49 @@ server.post("/api/rooms/:roomId", {
 				.send({ error: "User not found" });
 		}
 
-		room = await db.room.update({
-			where: { id: roomId },
-			data: { opponentId: user.id },
-		});
+		const board = createBoard(game.size);
 
-		return room;
+		return db.game.update({
+			where: { id: gameId },
+			data: {
+				opponentId: user.id,
+				state: JSON.stringify(board),
+				currentPlayerId: game.creatorSymbol === "X" ? game.creatorId : user.id,
+			},
+		});
 	},
 });
 
-server.get("/ws", { websocket: true }, async function wsHandler(socket, req) {
-	const accessToken = req.cookies.sAccessToken;
+server.get("/api/games/:gameId", {
+	preHandler: async (request, reply) => {
+		return verifySession()(request, reply);
+	},
+	handler: async (request: SessionRequest, reply) => {
+		//@ts-ignore - supertokens types are wrong about this
+		const { gameId } = request.params;
+
+		let game = await db.game.findUnique({
+			where: { id: gameId },
+			include: {
+				creator: { select: { id: true, nickname: true } },
+				opponent: { select: { id: true, nickname: true } },
+				currentPlayer: { select: { id: true, nickname: true } },
+			},
+		});
+
+		if (!game) {
+			return reply
+				.code(400)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.send({ error: "Game not found" });
+		}
+
+		return game;
+	},
+});
+
+server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, request) {
+	const accessToken = request.cookies.sAccessToken;
 
 	if (!accessToken) {
 		socket.close(1008, "Unauthorized");
@@ -233,13 +272,73 @@ server.get("/ws", { websocket: true }, async function wsHandler(socket, req) {
 		socket.close(1008, "Unauthorized");
 		return;
 	}
-
+	//@ts-ignore
+	const { gameId } = request.params;
 	const userId = session.getUserId();
-	console.log("ws connected", { userId });
+	console.log("ws connected", { userId, gameId });
 
-	socket.on("message", (message) => {
-		console.log({ userId, message: message.toString() });
-		socket.send("hi from server");
+	socket.on("message", async (message) => {
+		console.log({ userId, gameId, message: message.toString() });
+
+		const gameRow = await db.game.findUnique({
+			where: { id: gameId },
+			include: {
+				creator: { select: { id: true, nickname: true } },
+				opponent: { select: { id: true, nickname: true } },
+				currentPlayer: { select: { id: true, nickname: true } },
+			},
+		});
+
+		if (!gameRow) {
+			socket.send(
+				JSON.stringify({
+					type: "error",
+					error: "game_not_found",
+				}),
+			);
+			return;
+		}
+		const game = GameSchema.parse(gameRow);
+		const move = PlayerMoveSchema(game?.state?.length ?? 0).safeParse(
+			JSON.parse(message.toString()),
+		);
+		if (!move.success) {
+			socket.send(
+				JSON.stringify({
+					type: "error",
+					error: "invalid_move_data",
+					details: z.treeifyError(move.error),
+				}),
+			);
+			return;
+		}
+
+		if (game.currentPlayer.id !== userId) {
+			socket.send(JSON.stringify({ type: "error", error: "not_your_turn" }));
+			return;
+		}
+
+		try {
+			const { nextBoardState, nextPlayerId } = getNextBoardState({
+				game,
+				index: move.data.index,
+				playerId: userId,
+			});
+
+			await db.game.update({
+				where: { id: gameId },
+				data: {
+					state: JSON.stringify(nextBoardState),
+					currentPlayerId: nextPlayerId,
+				},
+			});
+
+			socket.send(JSON.stringify({ type: "update", nextBoardState, nextPlayerId }));
+		} catch (error) {
+			socket.send(
+				JSON.stringify({ type: "error", error: error.message, details: error.cause }),
+			);
+		}
 	});
 });
 

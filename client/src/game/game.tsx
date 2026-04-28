@@ -4,8 +4,9 @@ import PlayerIndicator from "./components/player-symbol";
 import SettingsForm, { initialSettings } from "./components/settings-form";
 import useGame from "./use-game";
 import { Button } from "@/components/ui/button";
-import { calculateBoardSizeToFit, playerSymbol } from "shared/game/functions";
+import { playerSymbol } from "shared/game/functions";
 import type { Settings } from "shared/game/types";
+import { calculateBoardSizeToFit } from "./components/board";
 
 export function Game() {
 	const headerRef = useRef<HTMLDivElement>(null);

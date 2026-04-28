@@ -1,2 +1,2 @@
-export { CreateRoomSchema, UpdateProfileSchema } from "./schemas";
-export type { CreateRoomData, UpdateProfileData } from "./schemas";
+export { CreateGameSchema, UpdateProfileSchema } from "./schemas";
+export type { CreateGameData, UpdateProfileData } from "./schemas";

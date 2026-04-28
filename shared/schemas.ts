@@ -1,7 +1,8 @@
 import z from "zod";
-import { SymbolText } from "./game-symbols";
+import { Player, SymbolText } from "./game-symbols";
+import type { BoardState } from "./game/types";
 
-export const CreateRoomSchema = z
+export const CreateGameSchema = z
 	.object({
 		name: z.string().min(5).max(100),
 		size: z.number().min(3).max(99),
@@ -22,7 +23,7 @@ export const CreateRoomSchema = z
 		}
 	});
 
-export type CreateRoomData = z.infer<typeof CreateRoomSchema>;
+export type CreateGameData = z.infer<typeof CreateGameSchema>;
 
 export const UpdateProfileSchema = z.object({
 	nickname: z.string().min(4).max(30),
@@ -30,11 +31,16 @@ export const UpdateProfileSchema = z.object({
 
 export type UpdateProfileData = z.infer<typeof UpdateProfileSchema>;
 
-export const RoomPlayerSchema = z.object({
+export const GamePlayerBaseSchema = z.object({
 	nickname: z.string(),
 });
 
-export const RoomSchema = z.object({
+export const GamePlayerSchema = z.object({
+	id: z.string(),
+	nickname: z.string(),
+});
+
+export const GamePreviewSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	size: z.number(),
@@ -44,10 +50,46 @@ export const RoomSchema = z.object({
 	creatorSymbol: z.string(),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
-	creator: RoomPlayerSchema,
-	opponent: RoomPlayerSchema.nullable(),
+	creator: GamePlayerBaseSchema,
+	opponent: GamePlayerBaseSchema.nullable(),
 });
-export type Room = z.infer<typeof RoomSchema>;
+export type GamePreview = z.infer<typeof GamePreviewSchema>;
 
-export const RoomsResponseSchema = z.array(RoomSchema);
-export type RoomsResponse = z.infer<typeof RoomsResponseSchema>;
+export const GamesResponseSchema = z.array(GamePreviewSchema);
+export type GamesResponse = z.infer<typeof GamesResponseSchema>;
+
+export const GameSchema = GamePreviewSchema.extend({
+	creator: GamePlayerSchema,
+	opponent: GamePlayerSchema,
+	state: z.json().transform((json) => JSON.parse(json?.toString() || "[]") as BoardState),
+	currentPlayer: GamePlayerSchema,
+});
+
+export type Game = z.infer<typeof GameSchema>;
+
+export const PlayerMoveSchema = (max: number) =>
+	z.object({
+		index: z
+			.number()
+			.min(0)
+			.max(max - 1),
+	});
+
+export const GameErrorSchema = z.object({
+	type: z.literal("error"),
+	error: z.string(),
+	details: z.any().optional(),
+});
+
+export const GameUpdateSchema = z.object({
+	type: z.literal("update"),
+	nextBoardState: z
+		.array(z.union([z.literal(Player.CROSS), z.literal(Player.CIRCLE), z.null()]))
+		.max(Math.pow(99, 2)),
+	nextPlayerId: z.string(),
+});
+
+export const GameMoveResultSchema = z.discriminatedUnion("type", [
+	GameErrorSchema,
+	GameUpdateSchema,
+]);

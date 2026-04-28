@@ -9,11 +9,11 @@ interface WebsocketHandler {
 	onError?: (event: Event) => void;
 }
 
-export function useGameSocket(roomId: string, handler: WebsocketHandler) {
+export function useGameSocket(gameId: string, handler: WebsocketHandler) {
 	const socket = useRef<WebSocket | null>(null);
 
 	useEffect(() => {
-		const ws = new WebSocket(url);
+		const ws = new WebSocket(`${url}/${gameId}`);
 		socket.current = ws;
 
 		ws.onopen = () => {
@@ -36,7 +36,7 @@ export function useGameSocket(roomId: string, handler: WebsocketHandler) {
 			}
 			socket.current = null;
 		};
-	}, [roomId, handler]);
+	}, [gameId, handler]);
 
 	return {
 		sendMessage: (message: string) => {

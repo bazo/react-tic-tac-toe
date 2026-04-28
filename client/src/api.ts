@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-	RoomsResponseSchema,
-	type CreateRoomData,
-	type Room,
+	GameSchema,
+	GamesResponseSchema,
+	type CreateGameData,
+	type GamePreview,
 	type UpdateProfileData,
 } from "shared/schemas";
 import { env } from "./env";
@@ -14,7 +15,7 @@ export interface UserProfile {
 }
 
 export const profileQueryKey = ["profile"];
-export const roomsQueryKey = ["rooms"];
+export const gamesQueryKey = ["games"];
 
 export async function fetchProfile() {
 	const res = await fetch(`${env.VITE_API_URL}/api/me`);
@@ -62,33 +63,33 @@ export function useUpdateProfile({ onSuccess }: { onSuccess?: () => void } = {})
 	});
 }
 
-export function useCreateRoom({
+export function useCreateGame({
 	onSuccess,
-}: { onSuccess?: (data: void, variables: CreateRoomData) => void } = {}) {
+}: { onSuccess?: (data: void, variables: CreateGameData) => void } = {}) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (roomData: CreateRoomData) => {
-			const res = await fetch(`${env.VITE_API_URL}/api/rooms`, {
+		mutationFn: async (gameData: CreateGameData) => {
+			const res = await fetch(`${env.VITE_API_URL}/api/games`, {
 				method: "POST",
-				body: JSON.stringify(roomData),
+				body: JSON.stringify(gameData),
 			});
 			const json = await res.json();
 			console.log(json);
 		},
 		onSuccess: (data, variables) => {
 			onSuccess?.(data, variables);
-			queryClient.invalidateQueries({ queryKey: ["rooms"] });
+			queryClient.invalidateQueries({ queryKey: ["games"] });
 		},
 	});
 }
 
-export function useJoinRoom({ onSuccess }: { onSuccess?: (data: void) => void } = {}) {
+export function useJoinGame({ onSuccess }: { onSuccess?: (data: void) => void } = {}) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (roomId: string) => {
-			const res = await fetch(`${env.VITE_API_URL}/api/rooms/${roomId}`, {
+		mutationFn: async (gameId: string) => {
+			const res = await fetch(`${env.VITE_API_URL}/api/games/${gameId}`, {
 				method: "POST",
 			});
 			const json = await res.json();
@@ -96,46 +97,56 @@ export function useJoinRoom({ onSuccess }: { onSuccess?: (data: void) => void } 
 		},
 		onSuccess: (data) => {
 			onSuccess?.(data);
-			queryClient.invalidateQueries({ queryKey: ["rooms"] });
+			queryClient.invalidateQueries({ queryKey: ["games"] });
 		},
 	});
 }
 
-export function useLoadRooms(userId: string) {
+export function useLoadGames(userId: string) {
 	return useQuery({
-		queryKey: roomsQueryKey,
+		queryKey: gamesQueryKey,
 		queryFn: async () => {
-			const res = await fetch(`${env.VITE_API_URL}/api/rooms`);
+			const res = await fetch(`${env.VITE_API_URL}/api/games`);
 			if (!res.ok) {
-				throw new Error("Failed to fetch rooms");
+				throw new Error("Failed to fetch games");
 			}
 			const json = await res.json();
-			const parsed = RoomsResponseSchema.safeParse(json);
+			const parsed = GamesResponseSchema.safeParse(json);
 
 			if (!parsed.success) {
 				throw parsed.error;
 			}
 
-			const rooms = {
-				created: [] as Room[],
-				joined: [] as Room[],
-				free: [] as Room[],
+			const games = {
+				created: [] as GamePreview[],
+				joined: [] as GamePreview[],
+				free: [] as GamePreview[],
 			};
-			(parsed.data || []).forEach((room) => {
-				if (room.creatorId === userId) {
-					rooms.created.push(room);
+			(parsed.data || []).forEach((game) => {
+				if (game.creatorId === userId) {
+					games.created.push(game);
 				}
 
-				if (room.opponentId === userId) {
-					rooms.joined.push(room);
+				if (game.opponentId === userId) {
+					games.joined.push(game);
 				}
 
-				if (!room.opponentId && room.creatorId !== userId) {
-					rooms.free.push(room);
+				if (!game.opponentId && game.creatorId !== userId) {
+					games.free.push(game);
 				}
 			});
 
-			return rooms;
+			return games;
 		},
 	});
+}
+
+export async function loadGame(gameId: string) {
+	const res = await fetch(`${env.VITE_API_URL}/api/games/${gameId}`);
+	if (!res.ok) {
+		throw new Error("Failed to load game");
+	}
+	const json = await res.json();
+
+	return GameSchema.parse(json);
 }

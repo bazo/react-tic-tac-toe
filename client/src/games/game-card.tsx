@@ -5,7 +5,7 @@ import {
 	Grid3x3Icon,
 	ClockIcon,
 } from "lucide-react";
-import type { Room } from "shared/schemas";
+import type { Game } from "shared/schemas";
 import { buttonVariants } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +20,7 @@ import { formatRelative } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 
 interface BaseProps {
-	room: Room;
+	game: Game;
 	currentUserId: string;
 }
 
@@ -30,7 +30,7 @@ interface CreatedProps extends BaseProps {
 
 interface OpenProps extends BaseProps {
 	variant: "open";
-	onJoin: (roomId: string) => void;
+	onJoin: (gameId: string) => void;
 	isJoining?: boolean;
 }
 
@@ -38,26 +38,26 @@ interface JoinedProps extends BaseProps {
 	variant: "joined";
 }
 
-type RoomCardProps = CreatedProps | OpenProps | JoinedProps;
+type GameCardProps = CreatedProps | OpenProps | JoinedProps;
 
-export function RoomCard(props: RoomCardProps) {
-	const { room, currentUserId, variant } = props;
+export function GameCard(props: GameCardProps) {
+	const { game, currentUserId, variant } = props;
 
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>{room.name}</CardTitle>
+				<CardTitle>{game.name}</CardTitle>
 				<CardDescription>
 					Created by{" "}
 					<span className="font-medium text-foreground">
-						{room.creatorId === currentUserId
+						{game.creatorId === currentUserId
 							? "you"
-							: room.creator.nickname}
+							: game.creator.nickname}
 					</span>{" "}
 					·{" "}
 					<span className="inline-flex items-center gap-1">
 						<ClockIcon className="size-3" />
-						{formatRelative(room.createdAt)}
+						{formatRelative(game.createdAt)}
 					</span>
 				</CardDescription>
 			</CardHeader>
@@ -67,27 +67,27 @@ export function RoomCard(props: RoomCardProps) {
 						<Grid3x3Icon className="size-4 text-muted-foreground" />
 						<span className="text-muted-foreground">Size:</span>
 						<span className="font-medium text-foreground">
-							{room.size}x{room.size}
+							{game.size}x{game.size}
 						</span>
 					</div>
 					<div className="flex items-center gap-2">
 						<TrophyIcon className="size-4 text-muted-foreground" />
 						<span className="text-muted-foreground">To win:</span>
 						<span className="font-medium text-foreground">
-							{room.toWin}
+							{game.toWin}
 						</span>
 					</div>
 					<div className="flex items-center gap-2">
 						<span className="text-muted-foreground">Symbol:</span>
 						<span className="font-heading text-2xl leading-none text-foreground">
-							{room.creatorSymbol}
+							{game.creatorSymbol}
 						</span>
 					</div>
 					<div className="flex items-center gap-2">
 						<span className="text-muted-foreground">Opponent:</span>
-						{room.opponentId ? (
+						{game.opponentId ? (
 							<span className="font-medium text-foreground">
-								{room.opponent?.nickname}
+								{game.opponent?.nickname}
 							</span>
 						) : (
 							<span className="italic text-muted-foreground">
@@ -100,8 +100,8 @@ export function RoomCard(props: RoomCardProps) {
 			<CardFooter>
 				{variant === "created" || variant === "joined" ? (
 					<Link
-						to="/online-game/$roomId"
-						params={{ roomId: room.id }}
+						to="/online-game/$gameId"
+						params={{ gameId: game.id }}
 						target="_blank"
 						rel="noopener noreferrer"
 						className={buttonVariants({ className: "w-full" })}
@@ -114,7 +114,7 @@ export function RoomCard(props: RoomCardProps) {
 				{variant === "open" ? (
 					<Button
 						className="w-full"
-						onClick={() => props.onJoin(room.id)}
+						onClick={() => props.onJoin(game.id)}
 						disabled={props.isJoining}
 					>
 						<LogInIcon className="size-4" />

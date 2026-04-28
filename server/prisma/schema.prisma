@@ -15,21 +15,22 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  roomsCreated Room[] @relation(name: "roomsCreated")
-  roomsJoined  Room[] @relation(name: "roomsJoined")
+  gamesCreated Game[] @relation(name: "gamesCreated")
+  gamesJoined  Game[] @relation(name: "gamesJoined")
+  games        Game[]
 
   @@map("users")
 }
 
-model Room {
+model Game {
   id        String @id @default(cuid())
   name      String
   size      Int
   toWin     Int    @map("to_win")
-  creator   User   @relation(fields: [creatorId], references: [id], name: "roomsCreated")
+  creator   User   @relation(fields: [creatorId], references: [id], name: "gamesCreated")
   creatorId String @map("creator_id")
 
-  opponent   User?   @relation(fields: [opponentId], references: [id], name: "roomsJoined")
+  opponent   User?   @relation(fields: [opponentId], references: [id], name: "gamesJoined")
   opponentId String? @map("opponent_id")
 
   creatorSymbol String @map("creator_symbol")
@@ -37,5 +38,9 @@ model Room {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("rooms")
+  state           String?
+  currentPlayer   User?   @relation(fields: [currentPlayerId], references: [id])
+  currentPlayerId String? @map("current_player_id")
+
+  @@map("games")
 }

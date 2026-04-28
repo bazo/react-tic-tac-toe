@@ -1,8 +1,19 @@
 import styled from "@emotion/styled";
 
 import { getBoardSize, playerSymbol } from "shared/game/functions";
-import { type BoardState, squareSize } from "shared/game/types";
+import { type BoardState } from "shared/game/types";
 import { Player } from "shared/game-symbols";
+
+export const squareSize = 48;
+
+export function calculateBoardSizeToFit(usedHeight: number): number {
+	const pixels = Math.min(
+		window.innerHeight - usedHeight - 20,
+		window.innerWidth - 20,
+	);
+
+	return Math.floor(pixels / squareSize);
+}
 
 interface ContainerProps {
 	size: number;
@@ -52,7 +63,7 @@ const BoardContainer = styled.div<ContainerProps>`
 interface Props {
 	state: BoardState;
 	winningFields: number[];
-	onClick: (index: number) => void;
+	onClick?: (index: number) => void;
 }
 
 export function Board({ state, winningFields, onClick }: Props) {
@@ -61,11 +72,21 @@ export function Board({ state, winningFields, onClick }: Props) {
 			{state.map((player, index) => {
 				return (
 					<div
-						onClick={onClick.bind(null, index)}
+						onClick={
+							onClick ? onClick.bind(null, index) : undefined
+						}
 						key={index}
-						className={winningFields.includes(index) ? "winning" : undefined}
+						className={
+							winningFields.includes(index)
+								? "winning"
+								: undefined
+						}
 					>
-						<span className={player === Player.CIRCLE ? "circle" : "cross"}>
+						<span
+							className={
+								player === Player.CIRCLE ? "circle" : "cross"
+							}
+						>
 							{playerSymbol(player)}
 						</span>
 					</div>

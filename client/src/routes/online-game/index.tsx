@@ -1,10 +1,10 @@
-import { fetchProfile, useCreateRoom, useJoinRoom, useLoadRooms } from "@/api";
+import { fetchProfile, useCreateGame, useJoinGame, useLoadGames } from "@/api";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RoomCard } from "@/rooms/room-card";
-import { RoomForm } from "@/rooms/room-form";
+import { GameCard } from "@/games/game-card";
+import { GameForm } from "@/games/game-form";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import type { Room } from "shared/schemas";
+import type { Game } from "shared/schemas";
 import { SymbolText } from "shared/game-symbols";
 import { doesSessionExist } from "supertokens-auth-react/recipe/session";
 
@@ -21,34 +21,34 @@ export const Route = createFileRoute("/online-game/")({
 
 function RouteComponent() {
 	const data = Route.useLoaderData();
-	const loadRooms = useLoadRooms(data.id);
+	const loadGames = useLoadGames(data.id);
 
-	const createMutation = useCreateRoom({
+	const createMutation = useCreateGame({
 		onSuccess: (created) => {
-			console.log("Room created successfully", created);
+			console.log("Game created successfully", created);
 		},
 	});
 
-	const joinMutation = useJoinRoom({
+	const joinMutation = useJoinGame({
 		onSuccess: (joined) => {
-			console.log("Joined room successfully", joined);
+			console.log("Joined game successfully", joined);
 		},
 	});
 
-	const rooms = loadRooms.data;
-	const handleJoin = (roomId: string) => {
-		joinMutation.mutate(roomId);
+	const games = loadGames.data;
+	const handleJoin = (gameId: string) => {
+		joinMutation.mutate(gameId);
 	};
 
 	return (
 		<div className="flex flex-col gap-6">
 			<div>
-				<h1 className="font-heading text-xl mb-4">Create a room</h1>
-				<RoomForm
+				<h1 className="font-heading text-xl mb-4">Create a game</h1>
+				<GameForm
 					initialSettings={{
 						size: 3,
 						toWin: 3,
-						name: `${data.nickname}'s Room`,
+						name: `${data.nickname}'s Game`,
 						symbol: SymbolText.CROSS,
 					}}
 					onSubmit={createMutation.mutate}
@@ -58,87 +58,87 @@ function RouteComponent() {
 			<Tabs defaultValue="created" className="w-full">
 				<TabsList>
 					<TabsTrigger value="created">
-						{loadRooms.isLoading && <Spinner />} Created
-						{rooms?.created.length
-							? ` (${rooms.created.length})`
+						{loadGames.isLoading && <Spinner />} Created
+						{games?.created.length
+							? ` (${games.created.length})`
 							: ""}
 					</TabsTrigger>
 					<TabsTrigger value="joined">
 						Joined
-						{rooms?.joined.length
-							? ` (${rooms.joined.length})`
+						{games?.joined.length
+							? ` (${games.joined.length})`
 							: ""}
 					</TabsTrigger>
 					<TabsTrigger value="free">
 						Free
-						{rooms?.free.length ? ` (${rooms.free.length})` : ""}
+						{games?.free.length ? ` (${games.free.length})` : ""}
 					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="created">
-					<RoomGrid
-						rooms={rooms?.created ?? []}
-						emptyText="You haven't created any rooms yet."
+					<GameGrid
+						games={games?.created ?? []}
+						emptyText="You haven't created any games yet."
 					>
-						{(room) => (
-							<RoomCard
-								key={room.id}
-								room={room}
+						{(game) => (
+							<GameCard
+								key={game.id}
+								game={game}
 								currentUserId={data.id}
 								variant="created"
 							/>
 						)}
-					</RoomGrid>
+					</GameGrid>
 				</TabsContent>
 
 				<TabsContent value="joined">
-					<RoomGrid
-						rooms={rooms?.joined ?? []}
-						emptyText="You haven't joined any rooms yet."
+					<GameGrid
+						games={games?.joined ?? []}
+						emptyText="You haven't joined any games yet."
 					>
-						{(room) => (
-							<RoomCard
-								key={room.id}
-								room={room}
+						{(game) => (
+							<GameCard
+								key={game.id}
+								game={game}
 								currentUserId={data.id}
 								variant="joined"
 							/>
 						)}
-					</RoomGrid>
+					</GameGrid>
 				</TabsContent>
 
 				<TabsContent value="free">
-					<RoomGrid
-						rooms={rooms?.free ?? []}
-						emptyText="No free rooms available."
+					<GameGrid
+						games={games?.free ?? []}
+						emptyText="No free games available."
 					>
-						{(room) => (
-							<RoomCard
-								key={room.id}
-								room={room}
+						{(game) => (
+							<GameCard
+								key={game.id}
+								game={game}
 								currentUserId={data.id}
 								variant="open"
 								onJoin={handleJoin}
-								isJoining={joinMutation.isPending && joinMutation.variables === room.id}
+								isJoining={joinMutation.isPending && joinMutation.variables === game.id}
 							/>
 						)}
-					</RoomGrid>
+					</GameGrid>
 				</TabsContent>
 			</Tabs>
 		</div>
 	);
 }
 
-function RoomGrid({
-	rooms,
+function GameGrid({
+	games,
 	emptyText,
 	children,
 }: {
-	rooms: Room[];
+	games: Game[];
 	emptyText: string;
-	children: (room: Room) => React.ReactNode;
+	children: (game: Game) => React.ReactNode;
 }) {
-	if (rooms.length === 0) {
+	if (games.length === 0) {
 		return (
 			<p className="py-8 text-center text-muted-foreground">
 				{emptyText}
@@ -148,7 +148,7 @@ function RoomGrid({
 
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-			{rooms.map((room) => children(room))}
+			{games.map((game) => children(game))}
 		</div>
 	);
 }

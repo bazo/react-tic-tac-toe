@@ -5,11 +5,9 @@ export interface Settings {
 	toWin: number;
 }
 
-export type BoardState = (Player | undefined)[];
+export type BoardState = (Player | null)[];
 
 export interface GameWinCheckStrategy {
 	checkWin: (boardState: BoardState, currentPlayer: Player, index: number) => boolean;
 	getWinningFields: () => number[];
 }
-
-export const squareSize = 48;

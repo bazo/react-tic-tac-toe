@@ -2,29 +2,29 @@ import { useAppForm } from "@/components/forms/form";
 import { SettingsFields } from "@/game/components/settings-form";
 import type { Settings } from "shared/game/types";
 import { SymbolText } from "shared/game-symbols";
-import { CreateRoomSchema } from "shared/schemas";
-interface RoomSettings extends Settings {
+import { CreateGameSchema } from "shared/schemas";
+interface GameSettings extends Settings {
 	name: string;
 	symbol: typeof SymbolText.CROSS | typeof SymbolText.CIRCLE;
 }
 
-interface RoomFormProps {
-	initialSettings: RoomSettings;
-	onSubmit: (settings: RoomSettings) => void;
+interface GameFormProps {
+	initialSettings: GameSettings;
+	onSubmit: (settings: GameSettings) => void;
 	className?: string;
 }
 
-export function RoomForm({
+export function GameForm({
 	onSubmit,
 	initialSettings,
 	className,
-}: RoomFormProps) {
+}: GameFormProps) {
 	const form = useAppForm({
 		defaultValues: initialSettings,
 		validators: {
-			onSubmit: CreateRoomSchema,
-			onBlur: CreateRoomSchema,
-			onChange: CreateRoomSchema,
+			onSubmit: CreateGameSchema,
+			onBlur: CreateGameSchema,
+			onChange: CreateGameSchema,
 		},
 		onSubmit: async ({ value }) => {
 			onSubmit(value);

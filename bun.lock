@@ -96,6 +96,7 @@
     "shared": {
       "name": "shared",
       "dependencies": {
+        "ramda": "^0.32.0",
         "zod": "^4.3.6",
       },
     },

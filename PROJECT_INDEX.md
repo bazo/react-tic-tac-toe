@@ -19,7 +19,7 @@ Generated: 2026-04-28
 │   ├── db/              # Prisma DB client
 │   ├── generated/       # Prisma generated code
 │   ├── prisma/          # Schema definition (SQLite)
-│   └── rooms/           # (empty — planned multiplayer rooms)
+│   └── games/           # (empty — planned multiplayer games)
 ├── shared/              # Shared package (placeholder)
 ├── Taskfile.yml         # Task runner (task server, task client)
 └── CLAUDE.md            # Dev instructions
@@ -68,10 +68,10 @@ Bun workspaces: `client`, `server`, `shared`
 
 ### Server (`server/`)
 
-- **server.ts** — Fastify app with 3 API endpoints: `GET /api/me`, `GET /api/rooms`, `POST /api/rooms` (all session-gated)
+- **server.ts** — Fastify app with 3 API endpoints: `GET /api/me`, `GET /api/games`, `POST /api/games` (all session-gated)
 - **supertokens.ts** — Auth config: EmailPassword + ThirdParty (Google, GitHub)
 - **db/client.ts** — Prisma client with libSQL/better-sqlite3 adapter
-- **prisma/schema.prisma** — `Room` model: id, size, toWin, creatorId (SQLite)
+- **prisma/schema.prisma** — `Game` model: id, size, toWin, creatorId (SQLite)
 
 ## Auth
 
