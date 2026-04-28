@@ -1,6 +1,7 @@
 import { repeat } from "ramda";
 
-import { type BoardState, Player, squareSize, SymbolText } from "./types";
+import { type BoardState, squareSize } from "./types";
+import { Player, SymbolText } from "shared/game-symbols";
 
 export function createBoard(size: number): BoardState {
 	return repeat(undefined, Math.pow(size, 2));

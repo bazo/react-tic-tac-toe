@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 import { playerSymbol } from "../functions";
-import { Player } from "../types";
+import type { Player } from "shared/game-symbols";
 
 const StyledSpan = styled.span`
 	line-height: 36px;

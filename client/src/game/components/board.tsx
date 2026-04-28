@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 
 import { getBoardSize, playerSymbol } from "../functions";
-import { type BoardState, Player, squareSize } from "../types";
+import { type BoardState, squareSize } from "../types";
+import { Player } from "shared/game-symbols";
 
 interface ContainerProps {
 	size: number;
@@ -62,9 +63,17 @@ export function Board({ state, winningFields, onClick }: Props) {
 					<div
 						onClick={onClick.bind(null, index)}
 						key={index}
-						className={winningFields.includes(index) ? "winning" : undefined}
+						className={
+							winningFields.includes(index)
+								? "winning"
+								: undefined
+						}
 					>
-						<span className={player === Player.CIRCLE ? "circle" : "cross"}>
+						<span
+							className={
+								player === Player.CIRCLE ? "circle" : "cross"
+							}
+						>
 							{playerSymbol(player)}
 						</span>
 					</div>

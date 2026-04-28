@@ -1,4 +1,4 @@
-import { fetchProfile, useCreateRoom } from "@/api";
+import { fetchProfile, useCreateRoom, useLoadRooms } from "@/api";
 import { RoomForm } from "@/rooms/room-form";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { SymbolText } from "shared/game-symbols";
@@ -27,6 +27,8 @@ function RouteComponent() {
 		},
 	});
 
+	const loadRooms = useLoadRooms();
+
 	return (
 		<div className="flex flex-col gap-4">
 			<div>
@@ -43,6 +45,12 @@ function RouteComponent() {
 			</div>
 			<div>
 				<h1 className="text-xl text-balance">Join a room</h1>
+
+				{loadRooms.isLoading && <div>Loading rooms...</div>}
+
+				{loadRooms.data.map((room) => {
+					console.log(room);
+				})}
 			</div>
 		</div>
 	);
