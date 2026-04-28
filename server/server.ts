@@ -21,8 +21,9 @@ import { supertokensConfig } from "./supertokens";
 import { createDbConnection } from "./db/client";
 import websocket from "@fastify/websocket";
 import { createBoard } from "shared/game/functions";
-import { getNextBoardState, getPlayerData } from "shared/game/online";
+import { getNextBoardState } from "shared/game/online";
 import z from "zod";
+import { RoomManager } from "./room-manager";
 supertokens.init(supertokensConfig);
 
 const server = Fastify();
@@ -250,6 +251,8 @@ server.get("/api/games/:gameId", {
 	},
 });
 
+const rooms = new RoomManager();
+
 server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, request) {
 	const accessToken = request.cookies.sAccessToken;
 
@@ -276,6 +279,8 @@ server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, 
 	const { gameId } = request.params;
 	const userId = session.getUserId();
 	console.log("ws connected", { userId, gameId });
+
+	rooms.addClientToRoom(gameId, socket);
 
 	socket.on("message", async (message) => {
 		console.log({ userId, gameId, message: message.toString() });
@@ -332,8 +337,10 @@ server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, 
 					currentPlayerId: nextPlayerId,
 				},
 			});
-
-			socket.send(JSON.stringify({ type: "update", nextBoardState, nextPlayerId }));
+			rooms.broadcastToRoom(
+				gameId,
+				JSON.stringify({ type: "update", nextBoardState, nextPlayerId }),
+			);
 		} catch (error) {
 			socket.send(
 				JSON.stringify({ type: "error", error: error.message, details: error.cause }),

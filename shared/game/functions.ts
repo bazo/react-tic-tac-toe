@@ -4,7 +4,7 @@ import { type BoardState } from "./types";
 import { Player, SymbolText } from "shared/game-symbols";
 
 export function createBoard(size: number): BoardState {
-	return repeat(undefined, Math.pow(size, 2));
+	return repeat(null, Math.pow(size, 2));
 }
 
 export function getNextPlayer(currentPlayer: Player): Player {
@@ -13,10 +13,10 @@ export function getNextPlayer(currentPlayer: Player): Player {
 
 export function isBoardFilled(boardState: BoardState): boolean {
 	const length = boardState.length;
-	return boardState.filter((symbol) => symbol !== undefined).length === length;
+	return boardState.filter((symbol) => symbol !== null).length === length;
 }
 
-export function playerSymbol(player: Player | undefined): SymbolText {
+export function playerSymbol(player: Player | null): SymbolText {
 	if (!player) {
 		return SymbolText.EMPTY;
 	}
