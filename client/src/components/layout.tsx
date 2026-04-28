@@ -29,7 +29,7 @@ export function Layout({ children }: Props) {
 		<div className="min-h-screen bg-background text-foreground">
 			<header className="border-b border-border">
 				<nav className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
-					<Link to="/game" className="flex items-center gap-2">
+					<Link to="/local-game" className="flex items-center gap-2">
 						<img src="/icon.svg" alt="Tic Tac Toe" className="size-8" />
 						<span className="font-heading text-lg font-semibold">
 							Tic Tac Toe
@@ -38,11 +38,18 @@ export function Layout({ children }: Props) {
 
 					<div className="flex items-center gap-1">
 						<Link
-							to="/game"
+							to="/local-game"
 							className={linkClass}
 							activeProps={{ className: activeLinkClass }}
 						>
-							Game
+							Local Game
+						</Link>
+						<Link
+							to="/online-game"
+							className={linkClass}
+							activeProps={{ className: activeLinkClass }}
+						>
+							Online Game
 						</Link>
 						{!session.loading &&
 							(isLoggedIn ? (

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+dotenv: [".env"]
+  
+
+tasks:
+  default:
+    desc: Print a greeting message
+    cmds:
+      - task --list-all
+
+  server:
+    desc: Start the server
+    dir: server
+    cmds:
+      - bun run dev
+
+  client:
+    desc: Start the client
+    dir: client
+    cmds:
+      - bun run dev

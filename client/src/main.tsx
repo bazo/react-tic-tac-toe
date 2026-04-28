@@ -41,17 +41,17 @@ SuperTokens.init({
 
 	recipeList: [
 		EmailPassword.init(),
-		ThirdParty.init({
-			signInAndUpFeature: {
-				providers: [Google.init(), Github.init(), Apple.init()],
-			},
-		}),
+		// ThirdParty.init({
+		// 	signInAndUpFeature: {
+		// 		providers: [Google.init(), Github.init(), Apple.init()],
+		// 	},
+		// }),
 		Session.init(),
 	],
 
 	getRedirectionURL: async (context) => {
 		if (context.action === "SUCCESS" && context.newSessionCreated) {
-			return "/game";
+			return "/";
 		}
 	},
 });

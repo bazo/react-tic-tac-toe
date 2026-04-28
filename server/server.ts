@@ -5,63 +5,12 @@ import supertokens from "supertokens-node";
 import {
 	plugin as supertokensPlugin,
 	errorHandler as supertokensErrorHandler,
-} from "supertokens-node/framework/fastify/index.js";
-import { verifySession } from "supertokens-node/recipe/session/framework/fastify/index.js";
-import Session from "supertokens-node/recipe/session/index.js";
-import EmailPassword from "supertokens-node/recipe/emailpassword/index.js";
-import ThirdParty from "supertokens-node/recipe/thirdparty/index.js";
-import { env } from "./env.ts";
+} from "supertokens-node/framework/fastify";
+import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
+import { env } from "./env";
+import { supertokensConfig } from "./supertokens";
 
-supertokens.init({
-	framework: "fastify",
-	supertokens: {
-		connectionURI: env.SUPERTOKENS_CONNECTION_URI,
-		apiKey: env.SUPERTOKENS_API_KEY,
-	},
-	appInfo: {
-		appName: env.VITE_APP_NAME,
-		apiDomain: env.VITE_API_DOMAIN,
-		websiteDomain: env.VITE_WEBSITE_DOMAIN,
-		apiBasePath: "/auth",
-		websiteBasePath: "/auth",
-	},
-	recipeList: [
-		EmailPassword.init(),
-		ThirdParty.init({
-			signInAndUpFeature: {
-				providers: [
-					{
-						config: {
-							thirdPartyId: "google",
-							clients: [
-								{
-									clientId:
-										env.GOOGLE_CLIENT_ID ?? "",
-									clientSecret:
-										env.GOOGLE_CLIENT_SECRET ?? "",
-								},
-							],
-						},
-					},
-					{
-						config: {
-							thirdPartyId: "github",
-							clients: [
-								{
-									clientId:
-										env.GITHUB_CLIENT_ID ?? "",
-									clientSecret:
-										env.GITHUB_CLIENT_SECRET ?? "",
-								},
-							],
-						},
-					},
-				],
-			},
-		}),
-		Session.init(),
-	],
-});
+supertokens.init(supertokensConfig);
 
 const server = Fastify();
 
@@ -85,15 +34,36 @@ await server.register(supertokensPlugin);
 
 server.setErrorHandler(supertokensErrorHandler());
 
+
 server.get("/api/me", {
-	preHandler: verifySession() as any,
+	preHandler: async (request, reply) => {
+		return verifySession()(request, reply)
+	},
 	handler: async (request, _reply) => {
 		const session = (request as any).session;
 		return { userId: session.getUserId() };
 	},
 });
 
-const port = Number(new URL(env.VITE_API_DOMAIN).port) || 3001;
+server.get("/api/rooms", {
+	preHandler: async (request, reply) => {
+		return verifySession()(request, reply)
+	},
+	handler: async (request, _reply) => {
+		const session = (request as any).session;
+		return { userId: session.getUserId() };
+	},
+});
 
-await server.listen({ port, host: "0.0.0.0" });
+server.post("/api/rooms", {
+	preHandler: async (request, reply) => {
+		return verifySession()(request, reply)
+	},
+	handler: async (request, _reply) => {
+		const session = (request as any).session;
+		return { userId: session.getUserId() };
+	},
+});
+
+await server.listen({ port: env.VITE_API_PORT, host: env.VITE_API_HOST });
 console.log(`Server running on ${env.VITE_API_DOMAIN}`);

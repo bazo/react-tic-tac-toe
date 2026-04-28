@@ -1,0 +1,52 @@
+import Session from "supertokens-node/recipe/session/index.js";
+import EmailPassword from "supertokens-node/recipe/emailpassword/index.js";
+import ThirdParty from "supertokens-node/recipe/thirdparty/index.js";
+import { env } from "./env.ts";
+import type { SuperTokensConfig } from "supertokens-node";
+
+export const supertokensConfig = {
+	framework: "fastify",
+	supertokens: {
+		connectionURI: env.SUPERTOKENS_CONNECTION_URI,
+		apiKey: env.SUPERTOKENS_API_KEY,
+	},
+	appInfo: {
+		appName: env.VITE_APP_NAME,
+		apiDomain: env.VITE_API_DOMAIN,
+		websiteDomain: env.VITE_WEBSITE_DOMAIN,
+		apiBasePath: "/auth",
+		websiteBasePath: "/auth",
+	},
+	recipeList: [
+		EmailPassword.init(),
+		ThirdParty.init({
+			signInAndUpFeature: {
+				providers: [
+					{
+						config: {
+							thirdPartyId: "google",
+							clients: [
+								{
+									clientId: env.GOOGLE_CLIENT_ID ?? "",
+									clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
+								},
+							],
+						},
+					},
+					{
+						config: {
+							thirdPartyId: "github",
+							clients: [
+								{
+									clientId: env.GITHUB_CLIENT_ID ?? "",
+									clientSecret: env.GITHUB_CLIENT_SECRET ?? "",
+								},
+							],
+						},
+					},
+				],
+			},
+		}),
+		Session.init(),
+	],
+} satisfies SuperTokensConfig;
