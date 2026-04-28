@@ -1,9 +1,11 @@
 import { useAppForm } from "@/components/forms/form";
 import { SettingsFields } from "@/game/components/settings-form";
 import type { Settings } from "@/game/types";
+import type { SymbolText } from "shared/game-symbols";
 import { CreateRoomSchema } from "shared/schemas";
 interface RoomSettings extends Settings {
 	name: string;
+	symbol: Omit<SymbolText, typeof SymbolText.EMPTY>;
 }
 
 interface RoomFormProps {
@@ -39,10 +41,18 @@ export function RoomForm({
 			className={className}
 		>
 			<div className="flex flex-col gap-2 justify-center">
-				<form.AppField
-					name="name"
-					children={(field) => <field.TextField label="Name" />}
-				/>
+				<div className="flex gap-2 justify-center">
+					<form.AppField
+						name="name"
+						children={(field) => <field.TextField label="Name" />}
+					/>
+					<form.AppField
+						name="symbol"
+						children={(field) => (
+							<field.SymbolField label="Symbol" />
+						)}
+					/>
+				</div>
 				<div className="flex gap-2 justify-center">
 					<SettingsFields
 						form={form}

@@ -20,6 +20,8 @@
 		"@fontsource-variable/roboto": "^5.2.10",
 		"@fontsource-variable/roboto-slab": "^5.2.8",
 		"@rolldown/plugin-babel": "^0.2.3",
+		"@supertokens-plugins/profile-base-react": "^0.1.0",
+		"@supertokens-plugins/profile-details-react": "^0.1.0",
 		"@t3-oss/env-core": "^0.13.11",
 		"@tailwindcss/vite": "^4.2.4",
 		"@tanstack/react-form": "^1.29.1",

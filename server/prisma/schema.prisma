@@ -17,10 +17,13 @@ model User {
 
   roomsCreated Room[] @relation(name: "roomsCreated")
   roomsJoined  Room[] @relation(name: "roomsJoined")
+
+  @@map("users")
 }
 
 model Room {
   id        String @id @default(cuid())
+  name      String
   size      Int
   toWin     Int    @map("to_win")
   creator   User   @relation(fields: [creatorId], references: [id], name: "roomsCreated")
@@ -33,4 +36,6 @@ model Room {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("rooms")
 }

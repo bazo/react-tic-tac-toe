@@ -8,15 +8,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { useFieldContext, useFormContext } from "./form-context.ts";
 import { Button } from "../ui/button.tsx";
+import { SymbolText } from "shared/game-symbols";
 
 const parseNumber = (value: string): number => parseInt(value);
 
 export function TextField({
 	label,
 	orientation = "horizontal",
+	disabled,
 }: {
 	label: string;
 	orientation?: "horizontal" | "vertical";
+	disabled?: boolean;
 }) {
 	const field = useFieldContext<string>();
 
@@ -34,6 +37,7 @@ export function TextField({
 					onBlur={field.handleBlur}
 					onChange={(e) => field.handleChange(e.target.value)}
 					placeholder={label}
+					disabled={disabled}
 				/>
 				{isInvalid && <FieldError errors={errors} />}
 			</Field>
@@ -91,5 +95,39 @@ export function SubmitButton({ label }: { label: string }) {
 				</Button>
 			)}
 		/>
+	);
+}
+
+export function SymbolField({
+	label,
+	orientation = "horizontal",
+}: {
+	label: string;
+	orientation?: "horizontal" | "vertical";
+}) {
+	const field = useFieldContext<SymbolText>();
+
+	const errors = useStore(field.store, (state) => state.meta.errors);
+
+	const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+	return (
+		<FieldGroup>
+			<Field data-invalid={isInvalid} orientation={orientation}>
+				<FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+				<div
+					onClick={() => field.handleChange(SymbolText.CROSS)}
+					className={`flex items-center justify-center w-10 h-10 text-4xl cursor-pointer rounded ${field.state.value === SymbolText.CROSS ? "border-2 border-primary" : ""}`}
+				>
+					{SymbolText.CROSS}
+				</div>
+				<div
+					onClick={() => field.handleChange(SymbolText.CIRCLE)}
+					className={`flex items-center justify-center w-10 h-10 text-4xl cursor-pointer rounded ${field.state.value === SymbolText.CIRCLE ? "border-2 border-primary" : ""}`}
+				>
+					{SymbolText.CIRCLE}
+				</div>
+			</Field>
+			{isInvalid && <FieldError errors={errors} />}
+		</FieldGroup>
 	);
 }

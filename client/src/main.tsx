@@ -6,7 +6,13 @@ import { ThemeProvider } from "./components/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import ThirdParty, {
+	Google,
+	Github,
+	Apple,
+} from "supertokens-auth-react/recipe/thirdparty";
+import ProfileBasePlugin from "@supertokens-plugins/profile-base-react";
+import ProfileDetailsPlugin from "@supertokens-plugins/profile-details-react";
 import Session from "supertokens-auth-react/recipe/session";
 import { env } from "./env";
 import "./style.css";
@@ -37,16 +43,15 @@ SuperTokens.init({
 
 	recipeList: [
 		EmailPassword.init({
-            onHandleEvent: async (context) => {
-                if (context.action === "SUCCESS") {
-                    if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
-                        // TODO: Sign up
-                    } else {
-                        // TODO: Sign in
-                    }
-                }
-            }
-        }),
+			onHandleEvent: async (context) => {
+				console.log({ context });
+				if (context.action === "SUCCESS") {
+					await fetch(`${env.VITE_API_URL}/api/me`, {
+						method: "POST",
+					});
+				}
+			},
+		}),
 		// ThirdParty.init({
 		// 	signInAndUpFeature: {
 		// 		providers: [Google.init(), Github.init(), Apple.init()],
@@ -54,7 +59,14 @@ SuperTokens.init({
 		// }),
 		Session.init(),
 	],
-
+	experimental: {
+		plugins: [
+			ProfileBasePlugin.init({
+				profilePagePath: "/user/profile",
+			}),
+			ProfileDetailsPlugin.init(),
+		],
+	},
 	getRedirectionURL: async (context) => {
 		if (context.action === "SUCCESS" && context.newSessionCreated) {
 			return "/";

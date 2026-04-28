@@ -4,6 +4,7 @@ import ThirdParty from "supertokens-node/recipe/thirdparty/index.js";
 import { env } from "./env.ts";
 import type { SuperTokensConfig } from "supertokens-node";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
+import ProfileDetailsPlugin from "@supertokens-plugins/profile-details-nodejs";
 
 export const supertokensConfig = {
 	framework: "fastify",
@@ -51,4 +52,39 @@ export const supertokensConfig = {
 		Session.init(),
 		UserMetadata.init(),
 	],
+	experimental: {
+		plugins: [
+			ProfileDetailsPlugin.init({
+				sections: [
+					{
+						id: "preferences",
+						label: "Preferences",
+						description: "Customize your experience",
+						fields: [
+							{
+								id: "avatar",
+								label: "Profile Picture",
+								type: "image-url",
+								required: false,
+								placeholder: "https://example.com/avatar.jpg",
+							},
+							{
+								id: "theme",
+								label: "Preferred Theme",
+								type: "select",
+								required: false,
+								options: [
+									{ value: "light", label: "Light" },
+									{ value: "dark", label: "Dark" },
+									{ value: "auto", label: "Auto" },
+								],
+								defaultValue: "auto",
+							},
+						],
+					},
+				],
+				registerSectionsForProgressiveProfiling: true,
+			}),
+		],
+	},
 } satisfies SuperTokensConfig;

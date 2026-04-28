@@ -10,8 +10,8 @@ export async function createDbConnection(databaseUrl: string, authToken?: string
 		const adapter = new PrismaLibSql({ url: databaseUrl, authToken });
 		return new PrismaClient({ adapter });
 	} else {
-		const { PrismaBetterSqlite3 } = await import("@prisma/adapter-better-sqlite3");
-		const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
+		const { PrismaLibSql } = await import("@prisma/adapter-libsql");
+		const adapter = new PrismaLibSql({ url: `file:${databaseUrl}` });
 		return new PrismaClient({ adapter });
 	}
 }

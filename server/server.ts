@@ -8,6 +8,7 @@ import {
 } from "supertokens-node/framework/fastify";
 import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
 import type { SessionRequest } from "supertokens-node/framework/fastify";
+import { CreateRoomSchema, UpdateProfileSchema } from "shared/schemas";
 import { env } from "./env";
 import { supertokensConfig } from "./supertokens";
 import { createDbConnection } from "./db/client";
@@ -29,6 +30,7 @@ await server.register(cors, {
 		}
 	},
 	credentials: true,
+	methods: ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"],
 	allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
 });
 await server.register(formbody);
@@ -43,16 +45,30 @@ server.post("/api/me", {
 		return verifySession()(request, reply);
 	},
 	handler: async (request: SessionRequest, _reply) => {
-		const session = request.session!;
-		console.log(session)
-		// db.user.create({
-		// 	data: {
-		// 		id: session.getUserId(),
-		// 		email: session.
-		// 	}
-		// })
+		const userId = request.session!.getUserId();
+		const stUser = await supertokens.getUser(userId);
+		if (!stUser) {
+			return { status: "error" };
+		}
+		const email = stUser.emails[0];
 
-		return { userId: session.getUserId() };
+		const existing = await db.user.findUnique({ where: { id: userId } });
+		if (existing) {
+			if (existing.email !== email) {
+				await db.user.update({ where: { id: userId }, data: { email } });
+			}
+			return { status: "ok" };
+		}
+
+		const base = email.split("@")[0];
+		let nickname = base;
+		const taken = await db.user.findUnique({ where: { nickname } });
+		if (taken) {
+			nickname = `${base}${Math.floor(Math.random() * 10000)}`;
+		}
+
+		await db.user.create({ data: { id: userId, email, nickname } });
+		return { status: "ok" };
 	},
 });
 
@@ -60,13 +76,47 @@ server.get("/api/me", {
 	preHandler: async (request, reply) => {
 		return verifySession()(request, reply);
 	},
-	handler: async (request: SessionRequest, _reply) => {
-		const session = request.session!;
-		return { userId: session.getUserId() };
+	handler: async (request: SessionRequest, reply) => {
+		const userId = request.session!.getUserId();
+		const user = await db.user.findUnique({ where: { id: userId } });
+
+		if (!user) {
+			return reply.code(404).send({ error: "User not found" });
+		}
+
+		return { id: user.id, email: user.email, nickname: user.nickname };
 	},
 });
 
+server.put("/api/me", {
+	preHandler: async (request, reply) => {
+		return verifySession()(request, reply);
+	},
+	handler: async (request: SessionRequest, reply) => {
+		const userId = request.session!.getUserId();
+		const parsed = UpdateProfileSchema.safeParse(request.body);
 
+		if (!parsed.success) {
+			return reply
+				.code(400)
+				.send({ error: "Invalid input", details: parsed.error.flatten() });
+		}
+
+		const { nickname } = parsed.data;
+
+		const existing = await db.user.findUnique({ where: { nickname } });
+		if (existing && existing.id !== userId) {
+			return reply.code(409).send({ error: "Nickname already taken" });
+		}
+
+		const user = await db.user.update({
+			where: { id: userId },
+			data: { nickname },
+		});
+
+		return { id: user.id, email: user.email, nickname: user.nickname };
+	},
+});
 
 server.get("/api/rooms", {
 	preHandler: async (request, reply) => {
@@ -82,10 +132,29 @@ server.post("/api/rooms", {
 	preHandler: async (request, reply) => {
 		return verifySession()(request, reply);
 	},
-	handler: async (request: SessionRequest, _reply) => {
+	handler: async (request: SessionRequest, reply) => {
 		const session = request.session!;
-		console.log(session)
-		return { userId: session.getUserId() };
+		const body = CreateRoomSchema.parse(JSON.parse(request.body));
+
+		const owner = await db.user.findUnique({ where: { id: session.getUserId() } });
+		if (!owner) {
+			return reply
+				.code(400)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.send({ error: "Owner not found" });
+		}
+
+		const room = await db.room.create({
+			data: {
+				name: body.name,
+				size: body.size,
+				toWin: body.toWin,
+				creatorId: owner.id,
+				creatorSymbol: body.symbol,
+			},
+		});
+
+		return room;
 	},
 });
 

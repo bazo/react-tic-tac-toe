@@ -1,10 +1,8 @@
-import { useCreateRoom } from "@/api";
+import { fetchProfile, useCreateRoom } from "@/api";
 import { RoomForm } from "@/rooms/room-form";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import {
-	doesSessionExist,
-	getUserId,
-} from "supertokens-auth-react/recipe/session";
+import { SymbolText } from "shared/game-symbols";
+import { doesSessionExist } from "supertokens-auth-react/recipe/session";
 
 export const Route = createFileRoute("/online-game/")({
 	beforeLoad: async () => {
@@ -13,10 +11,7 @@ export const Route = createFileRoute("/online-game/")({
 			throw redirect({ to: "/auth" });
 		}
 	},
-	loader: async () => {
-		const userId = await getUserId();
-		return { userId };
-	},
+	loader: fetchProfile,
 	component: RouteComponent,
 });
 
@@ -24,12 +19,12 @@ function RouteComponent() {
 	const data = Route.useLoaderData();
 
 	const mutation = useCreateRoom({
-		onSuccess: (data) => {	
+		onSuccess: (data) => {
 			console.log("Room created successfully", data);
 			// You can redirect to the room page here, e.g.:
 			// navigate(`/rooms/${data.roomId}`);
-			// For now, we'll just log the response.	
-		}
+			// For now, we'll just log the response.
+		},
 	});
 
 	return (
@@ -40,7 +35,8 @@ function RouteComponent() {
 					initialSettings={{
 						size: 3,
 						toWin: 3,
-						name: `${data.userId}'s Room`,
+						name: `${data.nickname}'s Room`,
+						symbol: SymbolText.CROSS,
 					}}
 					onSubmit={mutation.mutate}
 				/>

@@ -28,6 +28,12 @@ tasks:
         cmds:
             - bun prisma migrate dev
 
+    prisma:
+        desc: Run Prisma commands
+        dir: server
+        cmds:
+            - bun prisma {{.CLI_ARGS}}
+
     client:
         desc: Start the client
         dir: client
