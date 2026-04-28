@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import { playerSymbol } from "shared/game/functions";
+import { playerSymbol } from "../functions";
 import type { Player } from "shared/game-symbols";
 
 const StyledSpan = styled.span`

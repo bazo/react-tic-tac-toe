@@ -1,6 +1,6 @@
 import { useAppForm } from "@/components/forms/form";
 import { SettingsFields } from "@/game/components/settings-form";
-import type { Settings } from "@/game/types";
+import type { Settings } from "shared/game/types";
 import { SymbolText } from "shared/game-symbols";
 import { CreateRoomSchema } from "shared/schemas";
 interface RoomSettings extends Settings {

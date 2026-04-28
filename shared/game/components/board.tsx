@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
-import { getBoardSize, playerSymbol } from "shared/game/functions";
-import { type BoardState, squareSize } from "shared/game/types";
+import { getBoardSize, playerSymbol } from "../functions";
+import { type BoardState, squareSize } from "../types";
 import { Player } from "shared/game-symbols";
 
 interface ContainerProps {

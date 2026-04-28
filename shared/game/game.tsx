@@ -2,10 +2,10 @@ import { useEffect, useRef } from "react";
 import GamePanel from "./components/game-panel";
 import PlayerIndicator from "./components/player-symbol";
 import SettingsForm, { initialSettings } from "./components/settings-form";
+import { calculateBoardSizeToFit, playerSymbol } from "./functions";
+import type { Settings } from "./types";
 import useGame from "./use-game";
 import { Button } from "@/components/ui/button";
-import { calculateBoardSizeToFit, playerSymbol } from "shared/game/functions";
-import type { Settings } from "shared/game/types";
 
 export function Game() {
 	const headerRef = useRef<HTMLDivElement>(null);
@@ -20,12 +20,8 @@ export function Game() {
 	} = useGame(initialSettings);
 
 	useEffect(() => {
-		const headerHeight =
-			headerRef.current?.getBoundingClientRect().bottom ?? 0;
-		setSettings({
-			...settings,
-			size: calculateBoardSizeToFit(headerHeight),
-		});
+		const headerHeight = headerRef.current?.getBoundingClientRect().bottom ?? 0;
+		setSettings({ ...settings, size: calculateBoardSizeToFit(headerHeight) });
 		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
 	}, []);
 
@@ -46,10 +42,7 @@ export function Game() {
 	return (
 		<GamePanel>
 			<div ref={headerRef}>
-				<SettingsForm
-					onSubmit={handleSettingsChange}
-					initialSettings={settings}
-				/>
+				<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
 				<div>
 					<Button onClick={handleResetClick} variant="destructive">
 						Reset
@@ -58,11 +51,7 @@ export function Game() {
 
 				{winner || isDraw ? (
 					<>
-						<h2>
-							{winner
-								? `Winner is ${playerSymbol(player)}`
-								: "It's a draw"}
-						</h2>
+						<h2>{winner ? `Winner is ${playerSymbol(player)}` : "It's a draw"}</h2>
 					</>
 				) : (
 					<PlayerIndicator player={player} />
