@@ -17,8 +17,15 @@ tasks:
     cmds:
       - bun run dev
 
+  generate:
+     desc: Generate Prisma client
+     dir: server
+     cmds:
+       - bun prisma generate
+
   client:
     desc: Start the client
     dir: client
     cmds:
       - bun run dev
+
