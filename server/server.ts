@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import formbody from "@fastify/formbody";
 import supertokens from "supertokens-node";
@@ -7,15 +8,19 @@ import {
 	errorHandler as supertokensErrorHandler,
 } from "supertokens-node/framework/fastify";
 import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
+import Session from "supertokens-node/recipe/session";
 import type { SessionRequest } from "supertokens-node/framework/fastify";
 import { CreateRoomSchema, UpdateProfileSchema } from "shared/schemas";
 import { env } from "./env";
 import { supertokensConfig } from "./supertokens";
 import { createDbConnection } from "./db/client";
+import websocket from "@fastify/websocket";
 
 supertokens.init(supertokensConfig);
 
 const server = Fastify();
+await server.register(cookie);
+await server.register(websocket);
 
 await server.register(cors, {
 	origin: (origin, cb) => {
@@ -204,6 +209,38 @@ server.post("/api/rooms/:roomId", {
 
 		return room;
 	},
+});
+
+server.get("/ws", { websocket: true }, async function wsHandler(socket, req) {
+	const accessToken = req.cookies.sAccessToken;
+
+	if (!accessToken) {
+		socket.close(1008, "Unauthorized");
+		return;
+	}
+
+	let session;
+	try {
+		session = await Session.getSessionWithoutRequestResponse(accessToken, undefined, {
+			sessionRequired: false,
+			antiCsrfCheck: false,
+		});
+	} catch {
+		session = undefined;
+	}
+
+	if (!session) {
+		socket.close(1008, "Unauthorized");
+		return;
+	}
+
+	const userId = session.getUserId();
+	console.log("ws connected", { userId });
+
+	socket.on("message", (message) => {
+		console.log({ userId, message: message.toString() });
+		socket.send("hi from server");
+	});
 });
 
 await server.listen({ port: env.VITE_API_PORT, host: env.VITE_API_HOST });
