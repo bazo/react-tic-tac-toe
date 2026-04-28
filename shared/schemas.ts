@@ -25,7 +25,6 @@ export const CreateRoomSchema = z
 export type CreateRoomData = z.infer<typeof CreateRoomSchema>;
 
 export const UpdateProfileSchema = z.object({
-	email: z.email(),
 	nickname: z.string().min(4).max(30),
 });
 
