@@ -124,7 +124,19 @@ server.get("/api/rooms", {
 	},
 	handler: async (request: SessionRequest, _reply) => {
 		const session = request.session!;
-		return { userId: session.getUserId() };
+		return db.room.findMany({
+			where: {
+				OR: [
+					{ creatorId: session.getUserId() },
+					{ opponentId: session.getUserId() },
+					{ opponentId: null },
+				],
+			},
+			include: {
+				creator: { select: { nickname: true } },
+				opponent: { select: { nickname: true } },
+			},
+		});
 	},
 });
 

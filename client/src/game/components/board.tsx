@@ -63,17 +63,9 @@ export function Board({ state, winningFields, onClick }: Props) {
 					<div
 						onClick={onClick.bind(null, index)}
 						key={index}
-						className={
-							winningFields.includes(index)
-								? "winning"
-								: undefined
-						}
+						className={winningFields.includes(index) ? "winning" : undefined}
 					>
-						<span
-							className={
-								player === Player.CIRCLE ? "circle" : "cross"
-							}
-						>
+						<span className={player === Player.CIRCLE ? "circle" : "cross"}>
 							{playerSymbol(player)}
 						</span>
 					</div>

@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { CreateRoomData, UpdateProfileData } from "shared/schemas";
+import {
+	RoomsResponseSchema,
+	type CreateRoomData,
+	type Room,
+	type UpdateProfileData,
+} from "shared/schemas";
 import { env } from "./env";
 
 export interface UserProfile {
@@ -9,6 +14,7 @@ export interface UserProfile {
 }
 
 export const profileQueryKey = ["profile"];
+export const roomsQueryKey = ["rooms"];
 
 export async function fetchProfile() {
 	const res = await fetch(`${env.VITE_API_URL}/api/me`);
@@ -73,6 +79,45 @@ export function useCreateRoom({
 		onSuccess: (data, variables) => {
 			onSuccess?.(data, variables);
 			queryClient.invalidateQueries({ queryKey: ["rooms"] });
+		},
+	});
+}
+
+export function useLoadRooms(userId: string) {
+	return useQuery({
+		queryKey: roomsQueryKey,
+		queryFn: async () => {
+			const res = await fetch(`${env.VITE_API_URL}/api/rooms`);
+			if (!res.ok) {
+				throw new Error("Failed to fetch rooms");
+			}
+			const json = await res.json();
+			const parsed = RoomsResponseSchema.safeParse(json);
+
+			if (!parsed.success) {
+				throw parsed.error;
+			}
+
+			const rooms = {
+				created: [] as Room[],
+				joined: [] as Room[],
+				free: [] as Room[],
+			};
+			(parsed.data || []).forEach((room) => {
+				if (room.creatorId === userId) {
+					rooms.created.push(room);
+				}
+
+				if (room.opponentId === userId) {
+					rooms.joined.push(room);
+				}
+
+				if (!room.opponentId && room.creatorId !== userId) {
+					rooms.free.push(room);
+				}
+			});
+
+			return rooms;
 		},
 	});
 }

@@ -1,10 +1,5 @@
 import { useStore } from "@tanstack/react-form";
-import {
-	Field,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useFieldContext, useFormContext } from "./form-context.ts";
 import { Button } from "../ui/button.tsx";
@@ -70,9 +65,7 @@ export function NumberField({
 					name={field.name}
 					value={field.state.value}
 					onBlur={field.handleBlur}
-					onChange={(e) =>
-						field.handleChange(parseNumber(e.target.value))
-					}
+					onChange={(e) => field.handleChange(parseNumber(e.target.value))}
 					type="number"
 					min={min}
 					max={max}
