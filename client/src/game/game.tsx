@@ -1,13 +1,11 @@
 import { useEffect, useRef } from "react";
 import GamePanel from "./components/game-panel";
 import PlayerIndicator from "./components/player-symbol";
-import SettingsForm from "./components/settings-form";
+import SettingsForm, { initialSettings } from "./components/settings-form";
 import { calculateBoardSizeToFit, playerSymbol } from "./functions";
 import type { Settings } from "./types";
 import useGame from "./use-game";
 import { Button } from "@/components/ui/button";
-
-const initialSettings = { size: 5, toWin: 3 } as Settings;
 
 export function Game() {
 	const headerRef = useRef<HTMLDivElement>(null);
@@ -44,10 +42,7 @@ export function Game() {
 	return (
 		<GamePanel>
 			<div ref={headerRef}>
-				<SettingsForm
-					onSubmit={handleSettingsChange}
-					initialSettings={settings}
-				/>
+				<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
 				<div>
 					<Button onClick={handleResetClick} variant="destructive">
 						Reset
@@ -56,11 +51,7 @@ export function Game() {
 
 				{winner || isDraw ? (
 					<>
-						<h2>
-							{winner
-								? `Winner is ${playerSymbol(player)}`
-								: "It's a draw"}
-						</h2>
+						<h2>{winner ? `Winner is ${playerSymbol(player)}` : "It's a draw"}</h2>
 					</>
 				) : (
 					<PlayerIndicator player={player} />

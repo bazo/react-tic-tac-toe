@@ -6,11 +6,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import ThirdParty, {
-	Google,
-	Github,
-	Apple,
-} from "supertokens-auth-react/recipe/thirdparty";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session from "supertokens-auth-react/recipe/session";
 import { env } from "./env";
 import "./style.css";
@@ -33,14 +29,24 @@ const queryClient = new QueryClient();
 SuperTokens.init({
 	appInfo: {
 		appName: env.VITE_APP_NAME,
-		apiDomain: env.VITE_API_DOMAIN,
+		apiDomain: env.VITE_API_URL,
 		websiteDomain: env.VITE_WEBSITE_DOMAIN,
 		apiBasePath: "/auth",
 		websiteBasePath: "/auth",
 	},
 
 	recipeList: [
-		EmailPassword.init(),
+		EmailPassword.init({
+            onHandleEvent: async (context) => {
+                if (context.action === "SUCCESS") {
+                    if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                        // TODO: Sign up
+                    } else {
+                        // TODO: Sign in
+                    }
+                }
+            }
+        }),
 		// ThirdParty.init({
 		// 	signInAndUpFeature: {
 		// 		providers: [Google.init(), Github.init(), Apple.init()],

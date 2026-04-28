@@ -6,3 +6,31 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model User {
+  id       String @id
+  email    String @unique
+  nickname String @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  roomsCreated Room[] @relation(name: "roomsCreated")
+  roomsJoined  Room[] @relation(name: "roomsJoined")
+}
+
+model Room {
+  id        String @id @default(cuid())
+  size      Int
+  toWin     Int    @map("to_win")
+  creator   User   @relation(fields: [creatorId], references: [id], name: "roomsCreated")
+  creatorId String @map("creator_id")
+
+  opponent   User?   @relation(fields: [opponentId], references: [id], name: "roomsJoined")
+  opponentId String? @map("opponent_id")
+
+  creatorSymbol String @map("creator_symbol")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}

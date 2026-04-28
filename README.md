@@ -15,13 +15,13 @@ bun run dev
 
 ## Scripts
 
-| Command          | Description                        |
-| ---------------- | ---------------------------------- |
-| `bun run dev`    | Start Vite dev server              |
-| `bun run build`  | Type-check and build for production|
-| `bun run test`   | Run tests in watch mode (Vitest)   |
-| `bun run lint`   | Lint with oxlint                   |
-| `bun run format` | Format with oxfmt                  |
+| Command          | Description                         |
+| ---------------- | ----------------------------------- |
+| `bun run dev`    | Start Vite dev server               |
+| `bun run build`  | Type-check and build for production |
+| `bun run test`   | Run tests in watch mode (Vitest)    |
+| `bun run lint`   | Lint with oxlint                    |
+| `bun run format` | Format with oxfmt                   |
 
 ## Architecture
 
@@ -84,10 +84,10 @@ Win detection is pluggable via the `GameWinCheckStrategy` interface, which requi
 
 Two implementations exist:
 
-| Strategy | Logic | Used by |
-| --- | --- | --- |
-| **FullSizeStrategy** | Wins require filling an entire row, column, or diagonal (classic rules) | Tests only |
-| **XToWinStrategy** | Wins require `toWin` consecutive marks in any direction (row, column, diagonal, anti-diagonal) | Active game |
+| Strategy             | Logic                                                                                          | Used by     |
+| -------------------- | ---------------------------------------------------------------------------------------------- | ----------- |
+| **FullSizeStrategy** | Wins require filling an entire row, column, or diagonal (classic rules)                        | Tests only  |
+| **XToWinStrategy**   | Wins require `toWin` consecutive marks in any direction (row, column, diagonal, anti-diagonal) | Active game |
 
 Both check outward from the last-clicked cell rather than scanning the full board.
 
@@ -100,12 +100,12 @@ Both check outward from the last-clicked cell rather than scanning the full boar
 
 ### Key Libraries
 
-| Library | Purpose |
-| --- | --- |
-| React 19 | UI with React Compiler enabled via Babel plugin |
-| Vite 8 | Dev server and bundler |
-| Emotion | CSS-in-JS styling |
-| @tanstack/react-form | Settings form state management |
-| Ramda | Utility functions (`repeat`, `times`) |
-| Vitest | Unit testing |
-| oxlint / oxfmt | Linting and formatting (not ESLint/Prettier) |
+| Library              | Purpose                                         |
+| -------------------- | ----------------------------------------------- |
+| React 19             | UI with React Compiler enabled via Babel plugin |
+| Vite 8               | Dev server and bundler                          |
+| Emotion              | CSS-in-JS styling                               |
+| @tanstack/react-form | Settings form state management                  |
+| Ramda                | Utility functions (`repeat`, `times`)           |
+| Vitest               | Unit testing                                    |
+| oxlint / oxfmt       | Linting and formatting (not ESLint/Prettier)    |

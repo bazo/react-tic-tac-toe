@@ -4,7 +4,7 @@ import { z } from "zod/v4";
 export const env = createEnv({
 	server: {
 		VITE_APP_NAME: z.string().min(1).default("Tic Tac Toe"),
-		VITE_API_DOMAIN: z.url().default("http://localhost"),
+		VITE_API_URL: z.url().default("http://localhost"),
 		VITE_API_HOST: z.string().default("0.0.0.0"),
 		VITE_API_PORT: z.int().default(3001),
 		VITE_WEBSITE_DOMAIN: z.url().default("http://localhost:5173"),

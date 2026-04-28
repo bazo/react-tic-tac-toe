@@ -37,26 +37,29 @@ Bun workspaces: `client`, `server`, `shared`
 
 ## Routes (TanStack Router, file-based)
 
-| Route | File | Description |
-|-------|------|-------------|
-| `/` | `routes/index.tsx` | Redirects to `/local-game` |
-| `/local-game` | `routes/local-game.tsx` | Main game (Game component) |
+| Route          | File                     | Description                        |
+| -------------- | ------------------------ | ---------------------------------- |
+| `/`            | `routes/index.tsx`       | Redirects to `/local-game`         |
+| `/local-game`  | `routes/local-game.tsx`  | Main game (Game component)         |
 | `/online-game` | `routes/online-game.tsx` | Auth-gated, stub (not implemented) |
-| `/auth/*` | `routes/auth/` | SuperTokens auth UI |
+| `/auth/*`      | `routes/auth/`           | SuperTokens auth UI                |
 
 ## Core Modules
 
 ### Game Engine (`client/src/game/`)
+
 - **types.ts** — `Player`, `SymbolText`, `BoardState`, `GameWinCheckStrategy`, `Settings`
 - **functions.ts** — `createBoard`, `getNextPlayer`, `isBoardFilled`, `calculateBoardSizeToFit`, `playerSymbol`
 - **use-game.tsx** — `useGame` hook: owns board state, player turns, win/draw detection, settings
 - **game.tsx** — `Game` component: orchestrates settings form, board, reset, win/draw display
 
 ### Win Strategies (`client/src/game/strategies/`)
+
 - **x-to-win-strategy.ts** — Active strategy. Wins require `toWin` consecutive marks in any direction
 - **full-size-strategy.ts** — Classic NxN rules (entire row/col/diag). Tested but not used in-game
 
 ### UI Components
+
 - **Board** (`game/components/board.tsx`) — Grid rendering, click handling, winning field highlights
 - **GamePanel** (`game/components/game-panel.tsx`) — Layout wrapper with Emotion styling
 - **SettingsForm** (`game/components/settings-form.tsx`) — TanStack Form for size/toWin
@@ -64,6 +67,7 @@ Bun workspaces: `client`, `server`, `shared`
 - **Shared UI** (`components/ui/`) — shadcn components: Button, Field, Input, Label, Separator
 
 ### Server (`server/`)
+
 - **server.ts** — Fastify app with 3 API endpoints: `GET /api/me`, `GET /api/rooms`, `POST /api/rooms` (all session-gated)
 - **supertokens.ts** — Auth config: EmailPassword + ThirdParty (Google, GitHub)
 - **db/client.ts** — Prisma client with libSQL/better-sqlite3 adapter
@@ -75,34 +79,34 @@ SuperTokens (self-hosted or managed). EmailPassword enabled on both client/serve
 
 ## Configuration
 
-| File | Purpose |
-|------|---------|
-| `.oxlintrc.json` | Oxlint config |
-| `.oxfmtrc.json` | Oxfmt config (tabs, width 4, LF) |
-| `Taskfile.yml` | Dev task runner |
-| `client/components.json` | shadcn UI config |
-| `client/vite.config.ts` | Vite + React Compiler + TanStack Router + Tailwind |
-| `server/prisma.config.ts` | Prisma config |
-| `server/prisma/schema.prisma` | DB schema |
+| File                          | Purpose                                            |
+| ----------------------------- | -------------------------------------------------- |
+| `.oxlintrc.json`              | Oxlint config                                      |
+| `.oxfmtrc.json`               | Oxfmt config (tabs, width 4, LF)                   |
+| `Taskfile.yml`                | Dev task runner                                    |
+| `client/components.json`      | shadcn UI config                                   |
+| `client/vite.config.ts`       | Vite + React Compiler + TanStack Router + Tailwind |
+| `server/prisma.config.ts`     | Prisma config                                      |
+| `server/prisma/schema.prisma` | DB schema                                          |
 
 ## Key Dependencies
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| react | 19.x | UI framework |
-| vite | 8.x | Bundler |
-| @tanstack/react-router | 1.x | File-based routing |
-| @tanstack/react-form | 1.x | Settings form |
-| @tanstack/react-query | 5.x | Server state (wired, not heavily used yet) |
-| @emotion/styled | 11.x | Game board styling |
-| tailwindcss | 4.x | Utility CSS (shadcn components) |
-| supertokens-auth-react | 0.51.x | Client auth |
-| fastify | 5.x | Server framework |
-| supertokens-node | 24.x | Server auth |
-| prisma | 7.x | ORM (SQLite via libSQL) |
-| vitest | 4.x | Test framework |
-| typescript | 6.x | Type checking |
-| babel-plugin-react-compiler | 1.x | React Compiler |
+| Package                     | Version | Purpose                                    |
+| --------------------------- | ------- | ------------------------------------------ |
+| react                       | 19.x    | UI framework                               |
+| vite                        | 8.x     | Bundler                                    |
+| @tanstack/react-router      | 1.x     | File-based routing                         |
+| @tanstack/react-form        | 1.x     | Settings form                              |
+| @tanstack/react-query       | 5.x     | Server state (wired, not heavily used yet) |
+| @emotion/styled             | 11.x    | Game board styling                         |
+| tailwindcss                 | 4.x     | Utility CSS (shadcn components)            |
+| supertokens-auth-react      | 0.51.x  | Client auth                                |
+| fastify                     | 5.x     | Server framework                           |
+| supertokens-node            | 24.x    | Server auth                                |
+| prisma                      | 7.x     | ORM (SQLite via libSQL)                    |
+| vitest                      | 4.x     | Test framework                             |
+| typescript                  | 6.x     | Type checking                              |
+| babel-plugin-react-compiler | 1.x     | React Compiler                             |
 
 ## Tests
 

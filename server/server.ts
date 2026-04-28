@@ -7,6 +7,7 @@ import {
 	errorHandler as supertokensErrorHandler,
 } from "supertokens-node/framework/fastify";
 import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
+import type { SessionRequest } from "supertokens-node/framework/fastify";
 import { env } from "./env";
 import { supertokensConfig } from "./supertokens";
 import { createDbConnection } from "./db/client";
@@ -37,36 +38,56 @@ server.setErrorHandler(supertokensErrorHandler());
 
 const db = await createDbConnection(env.DATABASE_URL, env.TURSO_AUTH_TOKEN);
 
-
-server.get("/api/me", {
+server.post("/api/me", {
 	preHandler: async (request, reply) => {
-		return verifySession()(request, reply)
+		return verifySession()(request, reply);
 	},
-	handler: async (request, _reply) => {
-		const session = (request as any).session;
+	handler: async (request: SessionRequest, _reply) => {
+		const session = request.session!;
+		console.log(session)
+		// db.user.create({
+		// 	data: {
+		// 		id: session.getUserId(),
+		// 		email: session.
+		// 	}
+		// })
+
 		return { userId: session.getUserId() };
 	},
 });
 
+server.get("/api/me", {
+	preHandler: async (request, reply) => {
+		return verifySession()(request, reply);
+	},
+	handler: async (request: SessionRequest, _reply) => {
+		const session = request.session!;
+		return { userId: session.getUserId() };
+	},
+});
+
+
+
 server.get("/api/rooms", {
 	preHandler: async (request, reply) => {
-		return verifySession()(request, reply)
+		return verifySession()(request, reply);
 	},
-	handler: async (request, _reply) => {
-		const session = (request as any).session;
+	handler: async (request: SessionRequest, _reply) => {
+		const session = request.session!;
 		return { userId: session.getUserId() };
 	},
 });
 
 server.post("/api/rooms", {
 	preHandler: async (request, reply) => {
-		return verifySession()(request, reply)
+		return verifySession()(request, reply);
 	},
-	handler: async (request, _reply) => {
-		const session = (request as any).session;
+	handler: async (request: SessionRequest, _reply) => {
+		const session = request.session!;
+		console.log(session)
 		return { userId: session.getUserId() };
 	},
 });
 
 await server.listen({ port: env.VITE_API_PORT, host: env.VITE_API_HOST });
-console.log(`Server running on ${env.VITE_API_DOMAIN}`);
+console.log(`Server running on ${env.VITE_API_URL}`);

@@ -1,31 +1,35 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 
-version: '3'
+version: "3"
 
 dotenv: [".env"]
-  
 
 tasks:
-  default:
-    desc: Print a greeting message
-    cmds:
-      - task --list-all
+    default:
+        desc: Print a greeting message
+        cmds:
+            - task --list-all
 
-  server:
-    desc: Start the server
-    dir: server
-    cmds:
-      - bun run dev
+    server:
+        desc: Start the server
+        dir: server
+        cmds:
+            - bun run dev
 
-  generate:
-     desc: Generate Prisma client
-     dir: server
-     cmds:
-       - bun prisma generate
+    generate:
+        desc: Generate Prisma client
+        dir: server
+        cmds:
+            - bun prisma generate
 
-  client:
-    desc: Start the client
-    dir: client
-    cmds:
-      - bun run dev
+    migrate:
+        desc: Generate Prisma migrations and update the database
+        dir: server
+        cmds:
+            - bun prisma migrate dev
 
+    client:
+        desc: Start the client
+        dir: client
+        cmds:
+            - bun run dev

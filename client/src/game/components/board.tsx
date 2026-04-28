@@ -72,6 +72,6 @@ export function Board({ state, winningFields, onClick }: Props) {
 			})}
 		</BoardContainer>
 	);
-};
+}
 
 export default Board;

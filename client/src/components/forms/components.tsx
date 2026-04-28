@@ -11,7 +11,47 @@ import { Button } from "../ui/button.tsx";
 
 const parseNumber = (value: string): number => parseInt(value);
 
-export function NumberField({ label }: { label: string }) {
+export function TextField({
+	label,
+	orientation = "horizontal",
+}: {
+	label: string;
+	orientation?: "horizontal" | "vertical";
+}) {
+	const field = useFieldContext<string>();
+
+	const errors = useStore(field.store, (state) => state.meta.errors);
+
+	const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+	return (
+		<FieldGroup>
+			<Field data-invalid={isInvalid} orientation={orientation}>
+				<FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+				<Input
+					id={field.name}
+					name={field.name}
+					value={field.state.value}
+					onBlur={field.handleBlur}
+					onChange={(e) => field.handleChange(e.target.value)}
+					placeholder={label}
+				/>
+				{isInvalid && <FieldError errors={errors} />}
+			</Field>
+		</FieldGroup>
+	);
+}
+
+export function NumberField({
+	label,
+	orientation = "horizontal",
+	min,
+	max,
+}: {
+	label: string;
+	orientation?: "horizontal" | "vertical";
+	min?: number;
+	max?: number;
+}) {
 	const field = useFieldContext<number>();
 
 	const errors = useStore(field.store, (state) => state.meta.errors);
@@ -19,7 +59,7 @@ export function NumberField({ label }: { label: string }) {
 	const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 	return (
 		<FieldGroup>
-			<Field data-invalid={isInvalid} orientation="horizontal">
+			<Field data-invalid={isInvalid} orientation={orientation}>
 				<FieldLabel htmlFor={field.name}>{label}</FieldLabel>
 				<Input
 					id={field.name}
@@ -30,11 +70,12 @@ export function NumberField({ label }: { label: string }) {
 						field.handleChange(parseNumber(e.target.value))
 					}
 					type="number"
-					min={3}
-					placeholder="Size"
+					min={min}
+					max={max}
+					placeholder={label}
 				/>
-				{isInvalid && <FieldError errors={errors} />}
 			</Field>
+			{isInvalid && <FieldError errors={errors} />}
 		</FieldGroup>
 	);
 }

@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 
 const linkClass =
 	"rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
-const activeLinkClass =
-	"rounded-md px-3 py-1.5 text-sm font-medium bg-muted text-foreground";
+const activeLinkClass = "rounded-md px-3 py-1.5 text-sm font-medium bg-muted text-foreground";
 
 interface Props {
 	children: ReactNode;
@@ -31,9 +30,7 @@ export function Layout({ children }: Props) {
 				<nav className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
 					<Link to="/local-game" className="flex items-center gap-2">
 						<img src="/icon.svg" alt="Tic Tac Toe" className="size-8" />
-						<span className="font-heading text-lg font-semibold">
-							Tic Tac Toe
-						</span>
+						<span className="font-heading text-lg font-semibold">Tic Tac Toe</span>
 					</Link>
 
 					<div className="flex items-center gap-1">
@@ -53,11 +50,7 @@ export function Layout({ children }: Props) {
 						</Link>
 						{!session.loading &&
 							(isLoggedIn ? (
-								<Button
-									variant="ghost"
-									size="sm"
-									onClick={handleLogout}
-								>
+								<Button variant="ghost" size="sm" onClick={handleLogout}>
 									Logout
 								</Button>
 							) : (

@@ -19,10 +19,7 @@ interface ThemeProviderProps {
 	defaultTheme?: Theme;
 }
 
-export function ThemeProvider({
-	children,
-	defaultTheme = "system",
-}: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProviderProps) {
 	const [theme, setTheme] = useState<Theme>(
 		() => (localStorage.getItem(STORAGE_KEY) as Theme) || defaultTheme,
 	);
@@ -32,9 +29,7 @@ export function ThemeProvider({
 		root.classList.remove("light", "dark");
 
 		if (theme === "system") {
-			const systemTheme = window.matchMedia(
-				"(prefers-color-scheme: dark)",
-			).matches
+			const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
 				? "dark"
 				: "light";
 			root.classList.add(systemTheme);

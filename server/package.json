@@ -2,11 +2,11 @@
 	"name": "server",
 	"version": "0.2.0",
 	"private": true,
-	"type": "module",
 	"workspaces": [
 		"server",
 		"client"
 	],
+	"type": "module",
 	"scripts": {
 		"dev": "bun run server.ts"
 	},

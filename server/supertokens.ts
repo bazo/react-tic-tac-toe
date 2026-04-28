@@ -3,6 +3,7 @@ import EmailPassword from "supertokens-node/recipe/emailpassword/index.js";
 import ThirdParty from "supertokens-node/recipe/thirdparty/index.js";
 import { env } from "./env.ts";
 import type { SuperTokensConfig } from "supertokens-node";
+import UserMetadata from "supertokens-node/recipe/usermetadata";
 
 export const supertokensConfig = {
 	framework: "fastify",
@@ -12,7 +13,7 @@ export const supertokensConfig = {
 	},
 	appInfo: {
 		appName: env.VITE_APP_NAME,
-		apiDomain: env.VITE_API_DOMAIN,
+		apiDomain: env.VITE_API_URL,
 		websiteDomain: env.VITE_WEBSITE_DOMAIN,
 		apiBasePath: "/auth",
 		websiteBasePath: "/auth",
@@ -48,5 +49,6 @@ export const supertokensConfig = {
 			},
 		}),
 		Session.init(),
+		UserMetadata.init(),
 	],
 } satisfies SuperTokensConfig;

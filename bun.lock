@@ -50,6 +50,7 @@
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
         "shadcn": "^4.5.0",
+        "shared": "workspace:*",
         "supertokens-auth-react": "^0.51.2",
         "tailwind-merge": "^3.5.0",
         "tailwindcss": "^4.2.4",
@@ -88,6 +89,9 @@
     },
     "shared": {
       "name": "shared",
+      "dependencies": {
+        "zod": "^4.3.6",
+      },
     },
   },
   "packages": {
