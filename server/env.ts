@@ -14,6 +14,8 @@ export const env = createEnv({
 		GOOGLE_CLIENT_SECRET: z.string().optional(),
 		GITHUB_CLIENT_ID: z.string().optional(),
 		GITHUB_CLIENT_SECRET: z.string().optional(),
+		DATABASE_URL: z.string().default("tic-tac-toe.db"),
+		TURSO_AUTH_TOKEN: z.string().optional(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

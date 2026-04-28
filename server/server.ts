@@ -9,6 +9,7 @@ import {
 import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
 import { env } from "./env";
 import { supertokensConfig } from "./supertokens";
+import { createDbConnection } from "./db/client";
 
 supertokens.init(supertokensConfig);
 
@@ -33,6 +34,8 @@ await server.register(formbody);
 await server.register(supertokensPlugin);
 
 server.setErrorHandler(supertokensErrorHandler());
+
+const db = await createDbConnection(env.DATABASE_URL, env.TURSO_AUTH_TOKEN);
 
 
 server.get("/api/me", {

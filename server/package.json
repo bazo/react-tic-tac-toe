@@ -3,21 +3,30 @@
 	"version": "0.2.0",
 	"private": true,
 	"type": "module",
-	"scripts": {
-		"dev": "bun run server.ts"
-	},
 	"workspaces": [
 		"server",
 		"client"
 	],
+	"scripts": {
+		"dev": "bun run server.ts"
+	},
 	"dependencies": {
 		"@fastify/cors": "^11.2.0",
 		"@fastify/formbody": "^8.0.2",
+		"@libsql/client": "^0.17.3",
+		"@prisma/adapter-better-sqlite3": "^7.8.0",
+		"@prisma/adapter-libsql": "^7.8.0",
+		"@prisma/adapter-mariadb": "^7.8.0",
+		"@prisma/client": "^7.8.0",
 		"@t3-oss/env-core": "^0.13.11",
+		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "^25.6.0",
+		"better-sqlite3": "^12.9.0",
 		"fastify": "^5.8.5",
-		"oxfmt": "0.46.0",
-		"oxlint": "1.61.0",
+		"mariadb": "^3.5.2",
+		"oxfmt": "0.47.0",
+		"oxlint": "1.62.0",
+		"prisma": "^7.8.0",
 		"serve": "^14.2.6",
 		"supertokens-node": "^24.0.2",
 		"typescript": "~6.0.3",
