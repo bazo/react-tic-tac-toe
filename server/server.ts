@@ -170,5 +170,41 @@ server.post("/api/rooms", {
 	},
 });
 
+server.post("/api/rooms/:roomId", {
+	preHandler: async (request, reply) => {
+		return verifySession()(request, reply);
+	},
+	handler: async (request: SessionRequest, reply) => {
+		const session = request.session!;
+
+		//@ts-ignore - supertokens types are wrong about this
+		const { roomId } = request.params;
+
+		let room = await db.room.findUnique({ where: { id: roomId } });
+
+		if (!room) {
+			return reply
+				.code(400)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.send({ error: "Room not found" });
+		}
+
+		const user = await db.user.findUnique({ where: { id: session.getUserId() } });
+		if (!user) {
+			return reply
+				.code(400)
+				.header("Content-Type", "application/json; charset=utf-8")
+				.send({ error: "User not found" });
+		}
+
+		room = await db.room.update({
+			where: { id: roomId },
+			data: { opponentId: user.id },
+		});
+
+		return room;
+	},
+});
+
 await server.listen({ port: env.VITE_API_PORT, host: env.VITE_API_HOST });
 console.log(`Server running on ${env.VITE_API_URL}`);

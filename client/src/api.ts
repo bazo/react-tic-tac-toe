@@ -83,6 +83,24 @@ export function useCreateRoom({
 	});
 }
 
+export function useJoinRoom({ onSuccess }: { onSuccess?: (data: void) => void } = {}) {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (roomId: string) => {
+			const res = await fetch(`${env.VITE_API_URL}/api/rooms/${roomId}`, {
+				method: "POST",
+			});
+			const json = await res.json();
+			console.log(json);
+		},
+		onSuccess: (data) => {
+			onSuccess?.(data);
+			queryClient.invalidateQueries({ queryKey: ["rooms"] });
+		},
+	});
+}
+
 export function useLoadRooms(userId: string) {
 	return useQuery({
 		queryKey: roomsQueryKey,

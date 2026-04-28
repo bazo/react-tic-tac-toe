@@ -1,4 +1,4 @@
-import { fetchProfile, useCreateRoom, useLoadRooms } from "@/api";
+import { fetchProfile, useCreateRoom, useJoinRoom, useLoadRooms } from "@/api";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RoomCard } from "@/rooms/room-card";
@@ -29,9 +29,15 @@ function RouteComponent() {
 		},
 	});
 
+	const joinMutation = useJoinRoom({
+		onSuccess: (joined) => {
+			console.log("Joined room successfully", joined);
+		},
+	});
+
 	const rooms = loadRooms.data;
 	const handleJoin = (roomId: string) => {
-		console.log("Join not yet implemented", roomId);
+		joinMutation.mutate(roomId);
 	};
 
 	return (
@@ -53,13 +59,19 @@ function RouteComponent() {
 				<TabsList>
 					<TabsTrigger value="created">
 						{loadRooms.isLoading && <Spinner />} Created
-						{rooms?.created.length ? ` (${rooms.created.length})` : ""}
+						{rooms?.created.length
+							? ` (${rooms.created.length})`
+							: ""}
 					</TabsTrigger>
 					<TabsTrigger value="joined">
-						Joined{rooms?.joined.length ? ` (${rooms.joined.length})` : ""}
+						Joined
+						{rooms?.joined.length
+							? ` (${rooms.joined.length})`
+							: ""}
 					</TabsTrigger>
 					<TabsTrigger value="free">
-						Free{rooms?.free.length ? ` (${rooms.free.length})` : ""}
+						Free
+						{rooms?.free.length ? ` (${rooms.free.length})` : ""}
 					</TabsTrigger>
 				</TabsList>
 
@@ -96,7 +108,10 @@ function RouteComponent() {
 				</TabsContent>
 
 				<TabsContent value="free">
-					<RoomGrid rooms={rooms?.free ?? []} emptyText="No free rooms available.">
+					<RoomGrid
+						rooms={rooms?.free ?? []}
+						emptyText="No free rooms available."
+					>
 						{(room) => (
 							<RoomCard
 								key={room.id}
@@ -104,6 +119,7 @@ function RouteComponent() {
 								currentUserId={data.id}
 								variant="open"
 								onJoin={handleJoin}
+								isJoining={joinMutation.isPending && joinMutation.variables === room.id}
 							/>
 						)}
 					</RoomGrid>
@@ -123,7 +139,11 @@ function RoomGrid({
 	children: (room: Room) => React.ReactNode;
 }) {
 	if (rooms.length === 0) {
-		return <p className="py-8 text-center text-muted-foreground">{emptyText}</p>;
+		return (
+			<p className="py-8 text-center text-muted-foreground">
+				{emptyText}
+			</p>
+		);
 	}
 
 	return (

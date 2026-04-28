@@ -1,4 +1,10 @@
-import { ExternalLinkIcon, LogInIcon, TrophyIcon, Grid3x3Icon, ClockIcon } from "lucide-react";
+import {
+	ExternalLinkIcon,
+	LogInIcon,
+	TrophyIcon,
+	Grid3x3Icon,
+	ClockIcon,
+} from "lucide-react";
 import type { Room } from "shared/schemas";
 import { buttonVariants } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
@@ -34,7 +40,9 @@ interface JoinedProps extends BaseProps {
 
 type RoomCardProps = CreatedProps | OpenProps | JoinedProps;
 
-export function RoomCard({ room, currentUserId, variant }: RoomCardProps) {
+export function RoomCard(props: RoomCardProps) {
+	const { room, currentUserId, variant } = props;
+
 	return (
 		<Card>
 			<CardHeader>
@@ -42,7 +50,9 @@ export function RoomCard({ room, currentUserId, variant }: RoomCardProps) {
 				<CardDescription>
 					Created by{" "}
 					<span className="font-medium text-foreground">
-						{room.creatorId === currentUserId ? "you" : room.creator.nickname}
+						{room.creatorId === currentUserId
+							? "you"
+							: room.creator.nickname}
 					</span>{" "}
 					·{" "}
 					<span className="inline-flex items-center gap-1">
@@ -63,7 +73,9 @@ export function RoomCard({ room, currentUserId, variant }: RoomCardProps) {
 					<div className="flex items-center gap-2">
 						<TrophyIcon className="size-4 text-muted-foreground" />
 						<span className="text-muted-foreground">To win:</span>
-						<span className="font-medium text-foreground">{room.toWin}</span>
+						<span className="font-medium text-foreground">
+							{room.toWin}
+						</span>
 					</div>
 					<div className="flex items-center gap-2">
 						<span className="text-muted-foreground">Symbol:</span>
@@ -78,7 +90,9 @@ export function RoomCard({ room, currentUserId, variant }: RoomCardProps) {
 								{room.opponent?.nickname}
 							</span>
 						) : (
-							<span className="italic text-muted-foreground">Waiting...</span>
+							<span className="italic text-muted-foreground">
+								Waiting...
+							</span>
 						)}
 					</div>
 				</div>
@@ -98,9 +112,13 @@ export function RoomCard({ room, currentUserId, variant }: RoomCardProps) {
 				) : null}
 
 				{variant === "open" ? (
-					<Button className="w-full">
+					<Button
+						className="w-full"
+						onClick={() => props.onJoin(room.id)}
+						disabled={props.isJoining}
+					>
 						<LogInIcon className="size-4" />
-						Join
+						{props.isJoining ? "Joining..." : "Join"}
 					</Button>
 				) : null}
 			</CardFooter>
