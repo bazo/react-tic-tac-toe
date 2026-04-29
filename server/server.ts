@@ -56,35 +56,37 @@ server.setErrorHandler(supertokensErrorHandler());
 
 const db = await createDbConnection(env.DATABASE_URL, env.TURSO_AUTH_TOKEN);
 
+async function upsertUserFromSession(userId: string) {
+	const existing = await db.user.findUnique({ where: { id: userId } });
+	const stUser = await supertokens.getUser(userId);
+	if (!stUser) return existing ?? null;
+	const email = stUser.emails[0];
+
+	if (existing) {
+		if (existing.email !== email) {
+			return db.user.update({ where: { id: userId }, data: { email } });
+		}
+		return existing;
+	}
+
+	const base = email.split("@")[0];
+	let nickname = base;
+	const taken = await db.user.findUnique({ where: { nickname } });
+	if (taken) {
+		nickname = `${base}${Math.floor(Math.random() * 10000)}`;
+	}
+
+	return db.user.create({ data: { id: userId, email, nickname } });
+}
+
 server.post("/api/me", {
 	preHandler: async (request, reply) => {
 		return verifySession()(request, reply);
 	},
 	handler: async (request: SessionRequest, _reply) => {
 		const userId = request.session!.getUserId();
-		const stUser = await supertokens.getUser(userId);
-		if (!stUser) {
-			return { status: "error" };
-		}
-		const email = stUser.emails[0];
-
-		const existing = await db.user.findUnique({ where: { id: userId } });
-		if (existing) {
-			if (existing.email !== email) {
-				await db.user.update({ where: { id: userId }, data: { email } });
-			}
-			return { status: "ok" };
-		}
-
-		const base = email.split("@")[0];
-		let nickname = base;
-		const taken = await db.user.findUnique({ where: { nickname } });
-		if (taken) {
-			nickname = `${base}${Math.floor(Math.random() * 10000)}`;
-		}
-
-		await db.user.create({ data: { id: userId, email, nickname } });
-		return { status: "ok" };
+		const user = await upsertUserFromSession(userId);
+		return user ? { status: "ok" } : { status: "error" };
 	},
 });
 
@@ -94,7 +96,7 @@ server.get("/api/me", {
 	},
 	handler: async (request: SessionRequest, reply) => {
 		const userId = request.session!.getUserId();
-		const user = await db.user.findUnique({ where: { id: userId } });
+		const user = await upsertUserFromSession(userId);
 
 		if (!user) {
 			return reply.code(404).send({ error: "User not found" });
