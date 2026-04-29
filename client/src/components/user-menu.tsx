@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
-import Session from "supertokens-auth-react/recipe/session";
 import { User, LogOut } from "lucide-react";
+import Session from "supertokens-auth-react/recipe/session";
+
 import { useProfile } from "@/api";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

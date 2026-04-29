@@ -1,14 +1,16 @@
 import { useEffect, useRef } from "react";
-import GamePanel from "./components/game-panel";
-import PlayerIndicator from "./components/player-symbol";
-import SettingsForm, { initialSettings } from "./components/settings-form";
-import useGame from "./use-game";
-import { Button } from "@/components/ui/button";
 import { playerSymbol } from "shared/game/functions";
 import type { Settings } from "shared/game/types";
-import { calculateBoardSizeToFit } from "./components/board";
 
-export function Game() {
+import { Button } from "@/components/ui/button";
+
+import { calculateBoardSizeToFit } from "../components/board";
+import GamePanel from "../components/game-panel";
+import PlayerIndicator from "../components/player-symbol";
+import SettingsForm, { initialSettings } from "../components/settings-form";
+import useGame from "./use-game";
+
+export function LocalGame() {
 	const headerRef = useRef<HTMLDivElement>(null);
 	const {
 		board: Board,
@@ -21,8 +23,7 @@ export function Game() {
 	} = useGame(initialSettings);
 
 	useEffect(() => {
-		const headerHeight =
-			headerRef.current?.getBoundingClientRect().bottom ?? 0;
+		const headerHeight = headerRef.current?.getBoundingClientRect().bottom ?? 0;
 		setSettings({
 			...settings,
 			size: calculateBoardSizeToFit(headerHeight),
@@ -47,10 +48,7 @@ export function Game() {
 	return (
 		<GamePanel>
 			<div ref={headerRef}>
-				<SettingsForm
-					onSubmit={handleSettingsChange}
-					initialSettings={settings}
-				/>
+				<SettingsForm onSubmit={handleSettingsChange} initialSettings={settings} />
 				<div>
 					<Button onClick={handleResetClick} variant="destructive">
 						Reset
@@ -59,11 +57,7 @@ export function Game() {
 
 				{winner || isDraw ? (
 					<>
-						<h2>
-							{winner
-								? `Winner is ${playerSymbol(player)}`
-								: "It's a draw"}
-						</h2>
+						<h2>{winner ? `Winner is ${playerSymbol(player)}` : "It's a draw"}</h2>
 					</>
 				) : (
 					<PlayerIndicator player={player} />
@@ -73,5 +67,3 @@ export function Game() {
 		</GamePanel>
 	);
 }
-
-export default Game;

@@ -1,7 +1,8 @@
+import type { Player } from "shared/game-symbols";
+
+import { times } from "../../utils";
 import { getColumnIndex, getRowIndex } from "../functions";
 import { type BoardState, type GameWinCheckStrategy } from "../types";
-import type { Player } from "shared/game-symbols";
-import { times } from "../../utils";
 
 function createRowStartIndexes(size: number): number[] {
 	return times((i) => i * size, size);

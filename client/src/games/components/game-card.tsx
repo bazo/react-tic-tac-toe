@@ -1,11 +1,7 @@
-import {
-	ExternalLinkIcon,
-	LogInIcon,
-	TrophyIcon,
-	Grid3x3Icon,
-	ClockIcon,
-} from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ExternalLinkIcon, LogInIcon, TrophyIcon, Grid3x3Icon, ClockIcon } from "lucide-react";
 import type { GamePreview } from "shared/schemas";
+
 import { buttonVariants } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +13,6 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { formatRelative } from "@/lib/utils";
-import { Link } from "@tanstack/react-router";
 
 interface BaseProps {
 	game: GamePreview;
@@ -54,9 +49,7 @@ export function GameCard(props: GameCardProps) {
 				<CardDescription>
 					Created by{" "}
 					<span className="font-medium text-foreground">
-						{game.creator.id === currentUserId
-							? "you"
-							: game.creator.nickname}
+						{game.creator.id === currentUserId ? "you" : game.creator.nickname}
 					</span>{" "}
 					·{" "}
 					<span className="inline-flex items-center gap-1">
@@ -77,9 +70,7 @@ export function GameCard(props: GameCardProps) {
 					<div className="flex items-center gap-2">
 						<TrophyIcon className="size-4 text-muted-foreground" />
 						<span className="text-muted-foreground">To win:</span>
-						<span className="font-medium text-foreground">
-							{game.toWin}
-						</span>
+						<span className="font-medium text-foreground">{game.toWin}</span>
 					</div>
 					<div className="flex items-center gap-2">
 						<span className="text-muted-foreground">Symbol:</span>
@@ -89,26 +80,20 @@ export function GameCard(props: GameCardProps) {
 					</div>
 					{game.creator.id === currentUserId ? (
 						<div className="flex items-center gap-2">
-							<span className="text-muted-foreground">
-								Opponent:
-							</span>
+							<span className="text-muted-foreground">Opponent:</span>
 							{game.opponent?.id ? (
 								<span className="font-medium text-foreground">
 									{game.opponent?.nickname}
 								</span>
 							) : (
-								<span className="italic text-muted-foreground">
-									Waiting...
-								</span>
+								<span className="italic text-muted-foreground">Waiting...</span>
 							)}
 						</div>
 					) : null}
 
 					{game.currentPlayer && !game.winner ? (
 						<div className="flex items-center gap-2">
-							<span className="text-muted-foreground">
-								Current player:
-							</span>
+							<span className="text-muted-foreground">Current player:</span>
 							<span className="font-medium text-foreground">
 								{game.currentPlayer.nickname}
 							</span>
@@ -117,9 +102,7 @@ export function GameCard(props: GameCardProps) {
 
 					{game.winner ? (
 						<div className="flex items-center gap-2">
-							<span className="text-muted-foreground">
-								Winner:
-							</span>
+							<span className="text-muted-foreground">Winner:</span>
 							<span className="font-medium text-foreground">
 								{game.winner.nickname}
 							</span>

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Game from "../game/game";
+
+import { LocalGame } from "../games/local/local-game";
 
 export const Route = createFileRoute("/local-game")({
-	component: Game,
+	component: LocalGame,
 });

@@ -1,16 +1,18 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
-import { ThemeProvider } from "./components/theme-provider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 //import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import ProfileBasePlugin from "@supertokens-plugins/profile-base-react";
 import ProfileDetailsPlugin from "@supertokens-plugins/profile-details-react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
+
+import { ThemeProvider } from "./components/theme-provider";
 import { env } from "./env";
+import { routeTree } from "./routeTree.gen";
+
 import "./style.css";
 
 // Register things for typesafety
@@ -28,12 +30,12 @@ const router = createRouter({
 
 const queryClient = new QueryClient();
 
-console.log(import.meta.env, import.meta, window.location)
+console.log(import.meta.env, import.meta, window.location);
 
 SuperTokens.init({
 	appInfo: {
 		appName: env.VITE_APP_NAME,
-		apiDomain: import.meta.env.DEV ? env.VITE_API_URL: window.location.origin,
+		apiDomain: import.meta.env.DEV ? env.VITE_API_URL : window.location.origin,
 		websiteDomain: window.location.origin,
 		apiBasePath: "/auth",
 		websiteBasePath: "/auth",

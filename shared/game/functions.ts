@@ -1,6 +1,7 @@
-import { type BoardState } from "./types";
 import { Player, SymbolText } from "shared/game-symbols";
+
 import { repeat } from "../utils";
+import { type BoardState } from "./types";
 
 export function createBoard(size: number): BoardState {
 	return repeat(null, Math.pow(size, 2));

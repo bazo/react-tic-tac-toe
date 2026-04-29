@@ -6,7 +6,8 @@ import {
 	type GamePreview,
 	type UpdateProfileData,
 } from "shared/schemas";
-import { env } from "./env";
+
+import { apiUrl } from "./lib/api-url";
 
 export interface UserProfile {
 	id: string;
@@ -18,7 +19,7 @@ export const profileQueryKey = ["profile"];
 export const gamesQueryKey = ["games"];
 
 export async function fetchProfile() {
-	const res = await fetch(`${env.VITE_API_URL}/api/me`);
+	const res = await fetch(`${apiUrl}/api/me`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch profile");
 	}
@@ -32,7 +33,7 @@ export function useProfile(enabled = true) {
 	return useQuery<UserProfile>({
 		queryKey: profileQueryKey,
 		queryFn: async () => {
-			const res = await fetch(`${env.VITE_API_URL}/api/me`);
+			const res = await fetch(`${apiUrl}/api/me`);
 			if (!res.ok) throw new Error("Failed to fetch profile");
 			return res.json();
 		},
@@ -45,7 +46,7 @@ export function useUpdateProfile({ onSuccess }: { onSuccess?: () => void } = {})
 
 	return useMutation({
 		mutationFn: async (data: UpdateProfileData) => {
-			const res = await fetch(`${env.VITE_API_URL}/api/me`, {
+			const res = await fetch(`${apiUrl}/api/me`, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(data),
@@ -70,7 +71,7 @@ export function useCreateGame({
 
 	return useMutation({
 		mutationFn: async (gameData: CreateGameData) => {
-			const res = await fetch(`${env.VITE_API_URL}/api/games`, {
+			const res = await fetch(`${apiUrl}/api/games`, {
 				method: "POST",
 				body: JSON.stringify(gameData),
 			});
@@ -89,7 +90,7 @@ export function useJoinGame({ onSuccess }: { onSuccess?: (data: void) => void } 
 
 	return useMutation({
 		mutationFn: async (gameId: string) => {
-			const res = await fetch(`${env.VITE_API_URL}/api/games/${gameId}`, {
+			const res = await fetch(`${apiUrl}/api/games/${gameId}`, {
 				method: "POST",
 			});
 			const json = await res.json();
@@ -106,17 +107,7 @@ export function useLoadGames(userId: string) {
 	return useQuery({
 		queryKey: gamesQueryKey,
 		queryFn: async () => {
-			const res = await fetch(`${env.VITE_API_URL}/api/games`);
-			if (!res.ok) {
-				throw new Error("Failed to fetch games");
-			}
-			const json = await res.json();
-			const parsed = GamesResponseSchema.safeParse(json);
-
-			if (!parsed.success) {
-				console.log(parsed.error.message);
-				throw parsed.error;
-			}
+			const data = await loadGames();
 
 			const games = {
 				created: [] as GamePreview[],
@@ -124,7 +115,7 @@ export function useLoadGames(userId: string) {
 				free: [] as GamePreview[],
 				past: [] as GamePreview[],
 			};
-			(parsed.data || []).forEach((game) => {
+			data.forEach((game) => {
 				if (game.creator.id === userId && (game.winner === null || game.draw)) {
 					games.created.push(game);
 				}
@@ -147,8 +138,23 @@ export function useLoadGames(userId: string) {
 	});
 }
 
+export async function loadGames() {
+	const res = await fetch(`${apiUrl}/api/games`);
+	if (!res.ok) {
+		throw new Error("Failed to load games");
+	}
+	const json = await res.json();
+
+	const parsed = GamesResponseSchema.safeParse(json);
+	if (parsed.error) {
+		console.error(parsed.error);
+		throw parsed.error;
+	}
+	return parsed.data;
+}
+
 export async function loadGame(gameId: string) {
-	const res = await fetch(`${env.VITE_API_URL}/api/games/${gameId}`);
+	const res = await fetch(`${apiUrl}/api/games/${gameId}`);
 	if (!res.ok) {
 		throw new Error("Failed to load game");
 	}

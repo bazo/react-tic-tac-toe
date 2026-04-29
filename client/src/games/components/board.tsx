@@ -1,16 +1,12 @@
 import styled from "@emotion/styled";
-
+import { Player } from "shared/game-symbols";
 import { getBoardSize, playerSymbol } from "shared/game/functions";
 import { type BoardState } from "shared/game/types";
-import { Player } from "shared/game-symbols";
 
 export const squareSize = 48;
 
 export function calculateBoardSizeToFit(usedHeight: number): number {
-	const pixels = Math.min(
-		window.innerHeight - usedHeight - 20,
-		window.innerWidth - 20,
-	);
+	const pixels = Math.min(window.innerHeight - usedHeight - 20, window.innerWidth - 20);
 
 	return Math.floor(pixels / squareSize);
 }
@@ -72,21 +68,11 @@ export function Board({ state, winningFields, onClick }: Props) {
 			{state.map((player, index) => {
 				return (
 					<div
-						onClick={
-							onClick ? onClick.bind(null, index) : undefined
-						}
+						onClick={onClick ? onClick.bind(null, index) : undefined}
 						key={index}
-						className={
-							winningFields.includes(index)
-								? "winning"
-								: undefined
-						}
+						className={winningFields.includes(index) ? "winning" : undefined}
 					>
-						<span
-							className={
-								player === Player.CIRCLE ? "circle" : "cross"
-							}
-						>
+						<span className={player === Player.CIRCLE ? "circle" : "cross"}>
 							{playerSymbol(player)}
 						</span>
 					</div>

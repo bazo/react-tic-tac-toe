@@ -1,6 +1,6 @@
+import { UserProfileWrapper } from "@supertokens-plugins/profile-base-react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { doesSessionExist } from "supertokens-auth-react/recipe/session";
-import { UserProfileWrapper } from "@supertokens-plugins/profile-base-react";
 
 export const Route = createFileRoute("/user/profile")({
 	beforeLoad: async () => {

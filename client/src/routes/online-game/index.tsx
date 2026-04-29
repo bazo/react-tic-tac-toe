@@ -1,12 +1,13 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { SymbolText } from "shared/game-symbols";
+import type { GamePreview } from "shared/schemas";
+import { doesSessionExist } from "supertokens-auth-react/recipe/session";
+
 import { fetchProfile, useCreateGame, useJoinGame, useLoadGames } from "@/api";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GameCard } from "@/games/game-card";
 import { GameForm } from "@/games/game-form";
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import type { GamePreview } from "shared/schemas";
-import { SymbolText } from "shared/game-symbols";
-import { doesSessionExist } from "supertokens-auth-react/recipe/session";
 
 export const Route = createFileRoute("/online-game/")({
 	beforeLoad: async () => {
@@ -59,15 +60,11 @@ function RouteComponent() {
 				<TabsList>
 					<TabsTrigger value="created">
 						{loadGames.isLoading && <Spinner />} Created
-						{games?.created.length
-							? ` (${games.created.length})`
-							: ""}
+						{games?.created.length ? ` (${games.created.length})` : ""}
 					</TabsTrigger>
 					<TabsTrigger value="joined">
 						Joined
-						{games?.joined.length
-							? ` (${games.joined.length})`
-							: ""}
+						{games?.joined.length ? ` (${games.joined.length})` : ""}
 					</TabsTrigger>
 					<TabsTrigger value="free">
 						Free
@@ -112,10 +109,7 @@ function RouteComponent() {
 				</TabsContent>
 
 				<TabsContent value="free">
-					<GameGrid
-						games={games?.free ?? []}
-						emptyText="No free games available."
-					>
+					<GameGrid games={games?.free ?? []} emptyText="No free games available.">
 						{(game) => (
 							<GameCard
 								key={game.id}
@@ -124,8 +118,7 @@ function RouteComponent() {
 								variant="open"
 								onJoin={handleJoin}
 								isJoining={
-									joinMutation.isPending &&
-									joinMutation.variables === game.id
+									joinMutation.isPending && joinMutation.variables === game.id
 								}
 							/>
 						)}
@@ -162,11 +155,7 @@ function GameGrid({
 	children: (game: GamePreview) => React.ReactNode;
 }) {
 	if (games.length === 0) {
-		return (
-			<p className="py-8 text-center text-muted-foreground">
-				{emptyText}
-			</p>
-		);
+		return <p className="py-8 text-center text-muted-foreground">{emptyText}</p>;
 	}
 
 	return (

@@ -1,7 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { doesSessionExist } from "supertokens-auth-react/recipe/session";
+
 import { fetchProfile, loadGame } from "@/api";
-import { useOnlineGame } from "@/game/use-online-game";
+import { useOnlineGame } from "@/games/online/use-online-game";
 
 export const Route = createFileRoute("/online-game/$gameId")({
 	beforeLoad: async () => {
@@ -20,10 +21,10 @@ export const Route = createFileRoute("/online-game/$gameId")({
 
 		return { profile, game };
 	},
-	component: GameGamePage,
+	component: OnlineGamePage,
 });
 
-function GameGamePage() {
+function OnlineGamePage() {
 	const { profile, game } = Route.useLoaderData();
 
 	const {
@@ -36,7 +37,7 @@ function GameGamePage() {
 		game,
 		playerId: profile.id,
 	});
-	
+
 	return (
 		<div className="mx-auto">
 			<div className="flex items-center gap-4 align-bottom">

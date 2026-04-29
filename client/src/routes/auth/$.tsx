@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
 
 const preBuiltUIList = [EmailPasswordPreBuiltUI, ThirdPartyPreBuiltUI];
 

@@ -1,10 +1,11 @@
-import Session from "supertokens-node/recipe/session/index.js";
-import EmailPassword from "supertokens-node/recipe/emailpassword/index.js";
-import ThirdParty from "supertokens-node/recipe/thirdparty/index.js";
-import { env } from "./env.ts";
-import type { SuperTokensConfig } from "supertokens-node";
-import UserMetadata from "supertokens-node/recipe/usermetadata";
 import ProfileDetailsPlugin from "@supertokens-plugins/profile-details-nodejs";
+import type { SuperTokensConfig } from "supertokens-node";
+import EmailPassword from "supertokens-node/recipe/emailpassword/index.js";
+import Session from "supertokens-node/recipe/session/index.js";
+import ThirdParty from "supertokens-node/recipe/thirdparty/index.js";
+import UserMetadata from "supertokens-node/recipe/usermetadata";
+
+import { env } from "./env.ts";
 
 export const supertokensConfig = {
 	framework: "fastify",

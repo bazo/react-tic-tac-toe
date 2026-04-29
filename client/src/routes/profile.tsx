@@ -1,15 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { doesSessionExist } from "supertokens-auth-react/recipe/session";
 import { UpdateProfileSchema } from "shared/schemas";
+import { doesSessionExist } from "supertokens-auth-react/recipe/session";
+
 import { useProfile, useUpdateProfile } from "@/api";
 import { useAppForm } from "@/components/forms/form";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/profile")({
@@ -27,11 +22,7 @@ function ProfilePage() {
 	const updateMutation = useUpdateProfile();
 
 	if (isLoading || !profile) {
-		return (
-			<div className="py-8 text-center text-muted-foreground">
-				Loading profile...
-			</div>
-		);
+		return <div className="py-8 text-center text-muted-foreground">Loading profile...</div>;
 	}
 
 	return (
@@ -93,9 +84,7 @@ function ProfileForm({
 				{error && <p className="text-sm text-destructive">{error}</p>}
 
 				<form.AppForm>
-					<form.SubmitButton
-						label={isPending ? "Saving..." : "Save"}
-					/>
+					<form.SubmitButton label={isPending ? "Saving..." : "Save"} />
 				</form.AppForm>
 			</div>
 		</form>

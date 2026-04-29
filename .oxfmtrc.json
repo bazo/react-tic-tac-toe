@@ -4,5 +4,7 @@
 	"tabWidth": 4,
 	"endOfLine": "lf",
 	"insertFinalNewline": true,
-	"ignorePatterns": ["dist/**", "public/**", "**/*.html"]
+	"ignorePatterns": ["dist/**", "public/**", "**/*.html"],
+	"sortImports": true,
+	"sortPackageJson": true
 }

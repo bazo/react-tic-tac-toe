@@ -1,7 +1,8 @@
-import { env } from "@/env";
 import { useEffect, useRef } from "react";
 
-const url = `${env.VITE_API_URL.replace(/^http/, "ws")}/ws`;
+import { apiUrl } from "@/lib/api-url";
+
+const url = `${apiUrl.replace(/^http/, "ws")}/ws`;
 
 interface WebsocketHandler {
 	onOpen?: (event: Event, ws: WebSocket) => void;

@@ -4,6 +4,18 @@ version: "3"
 
 dotenv: [".env"]
 
+vars:
+    GITHUB_OWNER:
+        sh: git config --get remote.origin.url | sed -E
+            's#(git@github\.com:|https?://github\.com/)([^/]+)/.*#\2#'
+    IMAGE_NAME: ghcr.io/{{.GITHUB_OWNER}}/react-tic-tac-toe
+    GIT_BRANCH:
+        sh: git rev-parse --abbrev-ref HEAD | tr '/' '-'
+    GIT_SHA:
+        sh: git rev-parse --short HEAD
+    IMAGE_TAG_VERSION: "{{.GIT_BRANCH}}-{{.GIT_SHA}}"
+    PLATFORMS: linux/amd64,linux/arm64
+
 tasks:
     default:
         desc: Print a greeting message
@@ -44,3 +56,40 @@ tasks:
         dir: client
         cmds:
             - bun run build
+
+    docker:buildx-setup:
+        desc: Ensure a buildx builder exists for multi-arch
+        internal: true
+        cmds:
+            - docker buildx create --name tictactoe-builder --use
+        status:
+            - docker buildx inspect tictactoe-builder >/dev/null 2>&1
+
+    docker:build:
+        desc: Build single-arch image and load into local docker daemon
+        cmds:
+            - docker build -t {{.IMAGE_NAME}}:{{.IMAGE_TAG_VERSION}} -t
+              {{.IMAGE_NAME}}:latest .
+
+    docker:run:
+        desc: Run the latest local image with the SQLite db persisted on host disk
+        cmds:
+            - mkdir -p ./data
+            - >-
+                docker run --rm -it --init
+                --name tictactoe
+                -p 3001:3001
+                --env-file .env
+                -v $(pwd)/data:/app/data
+                -e DATABASE_URL=file:/app/data/tic-tac-toe.db
+                {{.IMAGE_NAME}}:latest
+
+    docker:push:
+        desc: Build multi-arch (amd64+arm64) and push to registry with latest +
+            branch-sha tags
+        deps: [docker:buildx-setup]
+        cmds:
+            - >-
+                docker buildx build --platform {{.PLATFORMS}} --tag
+                {{.IMAGE_NAME}}:{{.IMAGE_TAG_VERSION}} --tag
+                {{.IMAGE_NAME}}:latest --push .

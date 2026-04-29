@@ -1,12 +1,9 @@
 import { useState, type ReactElement } from "react";
+import { GameMoveResultSchema, type Game, type GamePlayer } from "shared/schemas";
 
-import Board from "./components/board";
-import {
-	GameMoveResultSchema,
-	type Game,
-	type GamePlayer,
-} from "shared/schemas";
-import { useGameSocket } from "@/lib/ws";
+import { useGameSocket } from "@/games/online/game-socket";
+
+import Board from "../components/board";
 
 interface useOnlineGameProps {
 	game: Game;
@@ -15,12 +12,8 @@ interface useOnlineGameProps {
 
 export const useOnlineGame = ({ game, playerId }: useOnlineGameProps) => {
 	const [boardState, setBoardState] = useState(game.state);
-	const [canPlay, setCanPlay] = useState<boolean>(
-		game.currentPlayer.id === playerId,
-	);
-	const [winningFields, setWinningFields] = useState<number[]>(
-		game.winningFields,
-	);
+	const [canPlay, setCanPlay] = useState<boolean>(game.currentPlayer.id === playerId);
+	const [winningFields, setWinningFields] = useState<number[]>(game.winningFields);
 
 	const [winner, setWinner] = useState<GamePlayer | null>(game.winner);
 	const [isDraw, setDraw] = useState(game.draw);
@@ -34,20 +27,12 @@ export const useOnlineGame = ({ game, playerId }: useOnlineGameProps) => {
 			const data = GameMoveResultSchema.safeParse(parsed);
 			if (data.success) {
 				if (data.data.type === "update") {
-					const {
-						nextBoardState,
-						nextPlayerId,
-						winnerId,
-						winningFields,
-						draw,
-					} = data.data;
+					const { nextBoardState, nextPlayerId, winnerId, winningFields, draw } =
+						data.data;
 					setBoardState(nextBoardState);
 					setCanPlay(nextPlayerId === playerId);
 					if (winnerId) {
-						const winner =
-							winnerId === game.creator.id
-								? game.creator
-								: game.opponent;
+						const winner = winnerId === game.creator.id ? game.creator : game.opponent;
 						setWinner(winner);
 						setWinningFields(winningFields);
 					}
@@ -80,9 +65,7 @@ export const useOnlineGame = ({ game, playerId }: useOnlineGameProps) => {
 	);
 
 	const opponentNickname =
-		game.creator.id === playerId
-			? game.opponent.nickname
-			: game.creator.nickname;
+		game.creator.id === playerId ? game.opponent.nickname : game.creator.nickname;
 
 	return { board, canPlay, opponentNickname, winner, isDraw };
 };

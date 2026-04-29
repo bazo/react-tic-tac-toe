@@ -1,8 +1,9 @@
-import { useAppForm } from "@/components/forms/form";
-import { SettingsFields } from "@/game/components/settings-form";
-import type { Settings } from "shared/game/types";
 import { SymbolText } from "shared/game-symbols";
+import type { Settings } from "shared/game/types";
 import { CreateGameSchema } from "shared/schemas";
+
+import { useAppForm } from "@/components/forms/form";
+import { SettingsFields } from "@/games/components/settings-form";
 interface GameSettings extends Settings {
 	name: string;
 	symbol: typeof SymbolText.CROSS | typeof SymbolText.CIRCLE;
@@ -14,11 +15,7 @@ interface GameFormProps {
 	className?: string;
 }
 
-export function GameForm({
-	onSubmit,
-	initialSettings,
-	className,
-}: GameFormProps) {
+export function GameForm({ onSubmit, initialSettings, className }: GameFormProps) {
 	const form = useAppForm({
 		defaultValues: initialSettings,
 		validators: {
@@ -48,16 +45,11 @@ export function GameForm({
 					/>
 					<form.AppField
 						name="symbol"
-						children={(field) => (
-							<field.SymbolField label="Symbol" />
-						)}
+						children={(field) => <field.SymbolField label="Symbol" />}
 					/>
 				</div>
 				<div className="flex gap-2 justify-center">
-					<SettingsFields
-						form={form}
-						fields={{ size: "size", toWin: "toWin" }}
-					/>
+					<SettingsFields form={form} fields={{ size: "size", toWin: "toWin" }} />
 					<form.AppForm>
 						<form.SubmitButton label="Create" />
 					</form.AppForm>

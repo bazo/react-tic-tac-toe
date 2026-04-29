@@ -1,11 +1,12 @@
-import { describe, expect, test } from "vitest";
-
-
-import { createBoard, getBoardSize,
+import { Player, SymbolText } from "shared/game-symbols";
+import {
+	createBoard,
+	getBoardSize,
 	getNextPlayer,
 	isBoardFilled,
-	playerSymbol, } from "shared/game/functions";
-import { Player, SymbolText } from "shared/game-symbols";
+	playerSymbol,
+} from "shared/game/functions";
+import { describe, expect, test } from "vitest";
 
 describe("game", () => {
 	test("createBoard", () => {

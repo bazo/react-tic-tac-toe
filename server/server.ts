@@ -1,31 +1,33 @@
-import Fastify from "fastify";
+import path from "node:path";
+
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import formbody from "@fastify/formbody";
-import supertokens from "supertokens-node";
-import {
-	plugin as supertokensPlugin,
-	errorHandler as supertokensErrorHandler,
-} from "supertokens-node/framework/fastify";
-import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
-import Session from "supertokens-node/recipe/session";
-import type { SessionRequest } from "supertokens-node/framework/fastify";
+import fastifyStatic from "@fastify/static";
+import websocket from "@fastify/websocket";
+import Fastify from "fastify";
+import { createBoard } from "shared/game/functions";
+import { getNextBoardState } from "shared/game/online";
 import {
 	CreateGameSchema,
 	PlayerMoveSchema,
 	GameSchema,
 	UpdateProfileSchema,
 } from "shared/schemas";
-import { env } from "./env";
-import { supertokensConfig } from "./supertokens";
-import { createDbConnection } from "./db/client";
-import websocket from "@fastify/websocket";
-import { createBoard } from "shared/game/functions";
-import { getNextBoardState } from "shared/game/online";
+import supertokens from "supertokens-node";
+import {
+	plugin as supertokensPlugin,
+	errorHandler as supertokensErrorHandler,
+} from "supertokens-node/framework/fastify";
+import type { SessionRequest } from "supertokens-node/framework/fastify";
+import Session from "supertokens-node/recipe/session";
+import { verifySession } from "supertokens-node/recipe/session/framework/fastify";
 import z from "zod";
+
+import { createDbConnection } from "./db/client";
+import { env } from "./env";
 import { RoomManager } from "./room-manager";
-import fastifyStatic from "@fastify/static";
-import path from "node:path";
+import { supertokensConfig } from "./supertokens";
 supertokens.init(supertokensConfig);
 
 const server = Fastify();
@@ -37,11 +39,7 @@ await server.register(websocket);
 
 await server.register(cors, {
 	origin: (origin, cb) => {
-		if (
-			!origin ||
-			origin.startsWith("http://localhost:") ||
-			origin === env.WEBSITE_DOMAIN
-		) {
+		if (!origin || origin.startsWith("http://localhost:") || origin === env.WEBSITE_DOMAIN) {
 			cb(null, true);
 		} else {
 			cb(new Error("Not allowed by CORS"), false);

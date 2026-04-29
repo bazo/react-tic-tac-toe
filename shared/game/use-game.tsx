@@ -8,12 +8,12 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import { Player } from "shared/game-symbols";
 
 import Board from "./components/board";
 import { createBoard, getNextPlayer, isBoardFilled } from "./functions";
 import XToWinStrategy from "./strategies/x-to-win-strategy";
 import { type Settings } from "./types";
-import { Player } from "shared/game-symbols";
 
 interface GameHandlers {
 	board: FC;

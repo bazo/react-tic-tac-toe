@@ -1,9 +1,11 @@
 import { useStore } from "@tanstack/react-form";
+import { SymbolText } from "shared/game-symbols";
+
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useFieldContext, useFormContext } from "./form-context.ts";
+
 import { Button } from "../ui/button.tsx";
-import { SymbolText } from "shared/game-symbols";
+import { useFieldContext, useFormContext } from "./form-context.ts";
 
 const parseNumber = (value: string): number => parseInt(value);
 
