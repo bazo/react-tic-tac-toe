@@ -1,9 +1,8 @@
 import { useState, type ReactElement } from "react";
 import { GameMoveResultSchema, type Game, type GamePlayer } from "shared/schemas";
 
+import Board from "@/games/components/board";
 import { useGameSocket } from "@/games/online/game-socket";
-
-import Board from "../components/board";
 
 interface useOnlineGameProps {
 	game: Game;

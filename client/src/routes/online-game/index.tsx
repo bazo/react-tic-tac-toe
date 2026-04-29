@@ -6,8 +6,8 @@ import { doesSessionExist } from "supertokens-auth-react/recipe/session";
 import { fetchProfile, useCreateGame, useJoinGame, useLoadGames } from "@/api";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GameCard } from "@/games/game-card";
-import { GameForm } from "@/games/game-form";
+import { GameCard } from "@/games/components/game-card";
+import { GameForm } from "@/games/components/game-form";
 
 export const Route = createFileRoute("/online-game/")({
 	beforeLoad: async () => {

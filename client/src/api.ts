@@ -25,7 +25,7 @@ export async function fetchProfile() {
 	}
 
 	const json = await res.json();
-	console.log(json);
+	console.log(JSON.stringify(json));
 	return json as UserProfile;
 }
 

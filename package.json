@@ -9,7 +9,7 @@
 	],
 	"type": "module",
 	"scripts": {
-		"format": "oxfmt .",
+		"format": "oxfmt . -c .oxfmtrc.json",
 		"lint": "oxlint -c .oxlintrc.json",
 		"test": "vitest"
 	},

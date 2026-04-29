@@ -3,12 +3,11 @@ import { playerSymbol } from "shared/game/functions";
 import type { Settings } from "shared/game/types";
 
 import { Button } from "@/components/ui/button";
-
-import { calculateBoardSizeToFit } from "../components/board";
-import GamePanel from "../components/game-panel";
-import PlayerIndicator from "../components/player-symbol";
-import SettingsForm, { initialSettings } from "../components/settings-form";
-import useGame from "./use-game";
+import { calculateBoardSizeToFit } from "@/games/components/board";
+import GamePanel from "@/games/components/game-panel";
+import PlayerIndicator from "@/games/components/player-symbol";
+import SettingsForm, { initialSettings } from "@/games/components/settings-form";
+import useGame from "@/games/local/use-game";
 
 export function LocalGame() {
 	const headerRef = useRef<HTMLDivElement>(null);
