@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GameCard } from "@/games/game-card";
 import { GameForm } from "@/games/game-form";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import type { Game } from "shared/schemas";
+import type { GamePreview } from "shared/schemas";
 import { SymbolText } from "shared/game-symbols";
 import { doesSessionExist } from "supertokens-auth-react/recipe/session";
 
@@ -73,6 +73,10 @@ function RouteComponent() {
 						Free
 						{games?.free.length ? ` (${games.free.length})` : ""}
 					</TabsTrigger>
+					<TabsTrigger value="past">
+						Past
+						{games?.past.length ? ` (${games.past.length})` : ""}
+					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="created">
@@ -119,7 +123,26 @@ function RouteComponent() {
 								currentUserId={data.id}
 								variant="open"
 								onJoin={handleJoin}
-								isJoining={joinMutation.isPending && joinMutation.variables === game.id}
+								isJoining={
+									joinMutation.isPending &&
+									joinMutation.variables === game.id
+								}
+							/>
+						)}
+					</GameGrid>
+				</TabsContent>
+
+				<TabsContent value="past">
+					<GameGrid
+						games={games?.past ?? []}
+						emptyText="You don't have any past games yet."
+					>
+						{(game) => (
+							<GameCard
+								key={game.id}
+								game={game}
+								currentUserId={data.id}
+								variant="past"
 							/>
 						)}
 					</GameGrid>
@@ -134,9 +157,9 @@ function GameGrid({
 	emptyText,
 	children,
 }: {
-	games: Game[];
+	games: GamePreview[];
 	emptyText: string;
-	children: (game: Game) => React.ReactNode;
+	children: (game: GamePreview) => React.ReactNode;
 }) {
 	if (games.length === 0) {
 		return (

@@ -7,6 +7,7 @@ import {
 	type UpdateProfileData,
 } from "shared/schemas";
 import { env } from "./env";
+import Game from "./game/game";
 
 export interface UserProfile {
 	id: string;
@@ -114,6 +115,7 @@ export function useLoadGames(userId: string) {
 			const parsed = GamesResponseSchema.safeParse(json);
 
 			if (!parsed.success) {
+				console.log(parsed.error.message);
 				throw parsed.error;
 			}
 
@@ -121,18 +123,23 @@ export function useLoadGames(userId: string) {
 				created: [] as GamePreview[],
 				joined: [] as GamePreview[],
 				free: [] as GamePreview[],
+				past: [] as GamePreview[],
 			};
 			(parsed.data || []).forEach((game) => {
-				if (game.creatorId === userId) {
+				if (game.creator.id === userId && (game.winner === null || game.draw)) {
 					games.created.push(game);
 				}
 
-				if (game.opponentId === userId) {
+				if (game.opponent?.id === userId && (game.winner === null || game.draw)) {
 					games.joined.push(game);
 				}
 
-				if (!game.opponentId && game.creatorId !== userId) {
+				if (!game.opponent?.id && game.creator.id !== userId) {
 					games.free.push(game);
+				}
+
+				if (game.winner || game.draw) {
+					games.past.push(game);
 				}
 			});
 
@@ -148,5 +155,10 @@ export async function loadGame(gameId: string) {
 	}
 	const json = await res.json();
 
-	return GameSchema.parse(json);
+	const parsed = GameSchema.safeParse(json);
+	if (parsed.error) {
+		console.error(parsed.error);
+		throw parsed.error;
+	}
+	return parsed.data;
 }

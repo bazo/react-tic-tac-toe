@@ -8,39 +8,47 @@ datasource db {
 }
 
 model User {
-  id       String @id
-  email    String @unique
-  nickname String @unique
-
+  id        String   @id
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  gamesCreated Game[] @relation(name: "gamesCreated")
-  gamesJoined  Game[] @relation(name: "gamesJoined")
-  games        Game[]
+  email    String @unique
+  nickname String @unique
+
+  gamesCreated          Game[] @relation(name: "gamesCreated")
+  gamesJoined           Game[] @relation(name: "gamesJoined")
+  gamesWaitingForMyMove Game[] @relation(name: "gamesWaitingForMyMove")
+  gamesWon              Game[] @relation(name: "gamesWon")
 
   @@map("users")
 }
 
 model Game {
-  id        String @id @default(cuid())
-  name      String
-  size      Int
-  toWin     Int    @map("to_win")
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name          String
+  size          Int
+  toWin         Int    @map("to_win")
+  creatorSymbol String @map("creator_symbol")
+
   creator   User   @relation(fields: [creatorId], references: [id], name: "gamesCreated")
   creatorId String @map("creator_id")
 
   opponent   User?   @relation(fields: [opponentId], references: [id], name: "gamesJoined")
   opponentId String? @map("opponent_id")
 
-  creatorSymbol String @map("creator_symbol")
+  state         String?
+  winningFields String? @map("winning_fields")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  state           String?
-  currentPlayer   User?   @relation(fields: [currentPlayerId], references: [id])
+  currentPlayer   User?   @relation(fields: [currentPlayerId], references: [id], name: "gamesWaitingForMyMove")
   currentPlayerId String? @map("current_player_id")
+
+  winner   User?   @relation(fields: [winnerId], references: [id], name: "gamesWon")
+  winnerId String? @map("winner_id")
+
+  draw Boolean @default(false)
 
   @@map("games")
 }

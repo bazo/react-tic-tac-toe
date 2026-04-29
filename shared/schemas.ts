@@ -31,27 +31,25 @@ export const UpdateProfileSchema = z.object({
 
 export type UpdateProfileData = z.infer<typeof UpdateProfileSchema>;
 
-export const GamePlayerBaseSchema = z.object({
-	nickname: z.string(),
-});
-
 export const GamePlayerSchema = z.object({
 	id: z.string(),
 	nickname: z.string(),
 });
+export type GamePlayer = z.infer<typeof GamePlayerSchema>;
 
 export const GamePreviewSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	size: z.number(),
 	toWin: z.number(),
-	creatorId: z.string(),
-	opponentId: z.string().nullable(),
 	creatorSymbol: z.string(),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
-	creator: GamePlayerBaseSchema,
-	opponent: GamePlayerBaseSchema.nullable(),
+	creator: GamePlayerSchema,
+	opponent: GamePlayerSchema.nullable(),
+	winner: GamePlayerSchema.nullable(),
+	currentPlayer: GamePlayerSchema.nullable(),
+	draw: z.boolean(),
 });
 export type GamePreview = z.infer<typeof GamePreviewSchema>;
 
@@ -63,6 +61,8 @@ export const GameSchema = GamePreviewSchema.extend({
 	opponent: GamePlayerSchema,
 	state: z.json().transform((json) => JSON.parse(json?.toString() || "[]") as BoardState),
 	currentPlayer: GamePlayerSchema,
+	winner: GamePlayerSchema.nullable(),
+	winningFields: z.json().transform((json) => JSON.parse(json?.toString() || "[]") as number[]),
 });
 
 export type Game = z.infer<typeof GameSchema>;
@@ -86,7 +86,10 @@ export const GameUpdateSchema = z.object({
 	nextBoardState: z
 		.array(z.union([z.literal(Player.CROSS), z.literal(Player.CIRCLE), z.null()]))
 		.max(Math.pow(99, 2)),
+	winningFields: z.array(z.number()).default([]),
 	nextPlayerId: z.string(),
+	winnerId: z.string().nullable(),
+	draw: z.boolean(),
 });
 
 export const GameMoveResultSchema = z.discriminatedUnion("type", [

@@ -138,16 +138,46 @@ server.get("/api/games", {
 	handler: async (request: SessionRequest, _reply) => {
 		const session = request.session!;
 		return db.game.findMany({
+			select: {
+				id: true,
+				name: true,
+				draw: true,
+				size: true,
+				toWin: true,
+				creatorSymbol: true,
+				createdAt: true,
+				updatedAt: true,
+				creator: {
+					select: {
+						id: true,
+						nickname: true,
+					},
+				},
+				opponent: {
+					select: {
+						id: true,
+						nickname: true,
+					},
+				},
+				currentPlayer: {
+					select: {
+						id: true,
+						nickname: true,
+					},
+				},
+				winner: {
+					select: {
+						id: true,
+						nickname: true,
+					},
+				},
+			},
 			where: {
 				OR: [
 					{ creatorId: session.getUserId() },
 					{ opponentId: session.getUserId() },
 					{ opponentId: null },
 				],
-			},
-			include: {
-				creator: { select: { nickname: true } },
-				opponent: { select: { nickname: true } },
 			},
 		});
 	},
@@ -237,6 +267,7 @@ server.get("/api/games/:gameId", {
 				creator: { select: { id: true, nickname: true } },
 				opponent: { select: { id: true, nickname: true } },
 				currentPlayer: { select: { id: true, nickname: true } },
+				winner: { select: { id: true, nickname: true } },
 			},
 		});
 
@@ -278,7 +309,6 @@ server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, 
 	//@ts-ignore
 	const { gameId } = request.params;
 	const userId = session.getUserId();
-	console.log("ws connected", { userId, gameId });
 
 	rooms.addClientToRoom(gameId, socket);
 
@@ -291,6 +321,7 @@ server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, 
 				creator: { select: { id: true, nickname: true } },
 				opponent: { select: { id: true, nickname: true } },
 				currentPlayer: { select: { id: true, nickname: true } },
+				winner: { select: { id: true, nickname: true } },
 			},
 		});
 
@@ -324,22 +355,33 @@ server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, 
 		}
 
 		try {
-			const { nextBoardState, nextPlayerId } = getNextBoardState({
-				game,
-				index: move.data.index,
-				playerId: userId,
-			});
+			const { nextBoardState, nextPlayerId, winnerId, draw, winningFields } =
+				getNextBoardState({
+					game,
+					index: move.data.index,
+					playerId: userId,
+				});
 
 			await db.game.update({
 				where: { id: gameId },
 				data: {
 					state: JSON.stringify(nextBoardState),
 					currentPlayerId: nextPlayerId,
+					winnerId,
+					draw,
+					winningFields: JSON.stringify(winningFields),
 				},
 			});
 			rooms.broadcastToRoom(
 				gameId,
-				JSON.stringify({ type: "update", nextBoardState, nextPlayerId }),
+				JSON.stringify({
+					type: "update",
+					nextBoardState,
+					nextPlayerId,
+					winnerId,
+					draw,
+					winningFields,
+				}),
 			);
 		} catch (error) {
 			socket.send(

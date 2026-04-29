@@ -26,8 +26,6 @@ export const Route = createFileRoute("/online-game/$gameId")({
 function GameGamePage() {
 	const { profile, game } = Route.useLoaderData();
 
-	console.log(game);
-
 	const {
 		board: Board,
 		canPlay,
@@ -38,7 +36,7 @@ function GameGamePage() {
 		game,
 		playerId: profile.id,
 	});
-
+	
 	return (
 		<div className="mx-auto">
 			<div className="flex items-center gap-4 align-bottom">
@@ -47,8 +45,15 @@ function GameGamePage() {
 					size: {game.size} to win: {game.toWin}
 				</div>
 			</div>
-			Your id: {profile.id} current player: {game.currentPlayer.id} <br />
-			{canPlay ? "Your turn!" : `Waiting for ${opponentNickname}...`}
+			{winner
+				? winner.id === profile.id
+					? "You are the winner"
+					: `Winner is ${winner.nickname}`
+				: isDraw
+					? "Draw"
+					: canPlay
+						? "Your turn!"
+						: `Waiting for ${opponentNickname}...`}
 			<Board />
 		</div>
 	);

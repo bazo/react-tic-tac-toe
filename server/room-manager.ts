@@ -1,10 +1,12 @@
 import { WebSocket } from "ws";
 
+const hour = 60 * 60 * 1000;
+
 export class RoomManager {
 	private rooms: Map<string, Set<{ ws: WebSocket; timestamp: number }>> = new Map();
-	private ttl: number;
+	private ttl = hour;
 
-	public __construct(ttl = 60 * 60 * 1000 * 1000) {
+	public __construct(ttl = hour) {
 		this.ttl = ttl;
 
 		// Periodically clean up old clients

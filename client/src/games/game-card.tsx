@@ -5,7 +5,7 @@ import {
 	Grid3x3Icon,
 	ClockIcon,
 } from "lucide-react";
-import type { Game } from "shared/schemas";
+import type { GamePreview } from "shared/schemas";
 import { buttonVariants } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +20,7 @@ import { formatRelative } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 
 interface BaseProps {
-	game: Game;
+	game: GamePreview;
 	currentUserId: string;
 }
 
@@ -38,7 +38,11 @@ interface JoinedProps extends BaseProps {
 	variant: "joined";
 }
 
-type GameCardProps = CreatedProps | OpenProps | JoinedProps;
+interface PastProps extends BaseProps {
+	variant: "past";
+}
+
+type GameCardProps = CreatedProps | OpenProps | JoinedProps | PastProps;
 
 export function GameCard(props: GameCardProps) {
 	const { game, currentUserId, variant } = props;
@@ -50,7 +54,7 @@ export function GameCard(props: GameCardProps) {
 				<CardDescription>
 					Created by{" "}
 					<span className="font-medium text-foreground">
-						{game.creatorId === currentUserId
+						{game.creator.id === currentUserId
 							? "you"
 							: game.creator.nickname}
 					</span>{" "}
@@ -83,22 +87,48 @@ export function GameCard(props: GameCardProps) {
 							{game.creatorSymbol}
 						</span>
 					</div>
-					<div className="flex items-center gap-2">
-						<span className="text-muted-foreground">Opponent:</span>
-						{game.opponentId ? (
+					{game.creator.id === currentUserId ? (
+						<div className="flex items-center gap-2">
+							<span className="text-muted-foreground">
+								Opponent:
+							</span>
+							{game.opponent?.id ? (
+								<span className="font-medium text-foreground">
+									{game.opponent?.nickname}
+								</span>
+							) : (
+								<span className="italic text-muted-foreground">
+									Waiting...
+								</span>
+							)}
+						</div>
+					) : null}
+
+					{game.currentPlayer && !game.winner ? (
+						<div className="flex items-center gap-2">
+							<span className="text-muted-foreground">
+								Current player:
+							</span>
 							<span className="font-medium text-foreground">
-								{game.opponent?.nickname}
+								{game.currentPlayer.nickname}
 							</span>
-						) : (
-							<span className="italic text-muted-foreground">
-								Waiting...
+						</div>
+					) : null}
+
+					{game.winner ? (
+						<div className="flex items-center gap-2">
+							<span className="text-muted-foreground">
+								Winner:
 							</span>
-						)}
-					</div>
+							<span className="font-medium text-foreground">
+								{game.winner.nickname}
+							</span>
+						</div>
+					) : null}
 				</div>
 			</CardContent>
 			<CardFooter>
-				{variant === "created" || variant === "joined" ? (
+				{variant !== "open" ? (
 					<Link
 						to="/online-game/$gameId"
 						params={{ gameId: game.id }}

@@ -1,16 +1,12 @@
-import { useState, type FC, type ReactElement } from "react";
+import { useState, type ReactElement } from "react";
 
 import Board from "./components/board";
-import { Player } from "shared/game-symbols";
-import { GameMoveResultSchema, type Game } from "shared/schemas";
+import {
+	GameMoveResultSchema,
+	type Game,
+	type GamePlayer,
+} from "shared/schemas";
 import { useGameSocket } from "@/lib/ws";
-
-interface GameHandlers {
-	board: FC;
-	player: Player;
-	winner: Player;
-	isDraw: boolean;
-}
 
 interface useOnlineGameProps {
 	game: Game;
@@ -22,9 +18,12 @@ export const useOnlineGame = ({ game, playerId }: useOnlineGameProps) => {
 	const [canPlay, setCanPlay] = useState<boolean>(
 		game.currentPlayer.id === playerId,
 	);
+	const [winningFields, setWinningFields] = useState<number[]>(
+		game.winningFields,
+	);
 
-	const [winner, setWinner] = useState<Player>(null as unknown as Player);
-	const [isDraw, setDraw] = useState(false);
+	const [winner, setWinner] = useState<GamePlayer | null>(game.winner);
+	const [isDraw, setDraw] = useState(game.draw);
 
 	const { sendMessage } = useGameSocket(game.id, {
 		onOpen: (event, ws) => {
@@ -35,9 +34,27 @@ export const useOnlineGame = ({ game, playerId }: useOnlineGameProps) => {
 			const data = GameMoveResultSchema.safeParse(parsed);
 			if (data.success) {
 				if (data.data.type === "update") {
-					const { nextBoardState, nextPlayerId } = data.data;
+					const {
+						nextBoardState,
+						nextPlayerId,
+						winnerId,
+						winningFields,
+						draw,
+					} = data.data;
 					setBoardState(nextBoardState);
 					setCanPlay(nextPlayerId === playerId);
+					if (winnerId) {
+						const winner =
+							winnerId === game.creator.id
+								? game.creator
+								: game.opponent;
+						setWinner(winner);
+						setWinningFields(winningFields);
+					}
+
+					if (draw) {
+						setDraw(true);
+					}
 				}
 			} else {
 				console.error("Invalid message from server:", data.error);
@@ -49,13 +66,15 @@ export const useOnlineGame = ({ game, playerId }: useOnlineGameProps) => {
 	});
 
 	const handleSquareClick = (index: number): void => {
-		sendMessage(JSON.stringify({ type: "makeMove", index }));
+		if (!game.winner && !game.draw) {
+			sendMessage(JSON.stringify({ type: "makeMove", index }));
+		}
 	};
 
 	const board: () => ReactElement = () => (
 		<Board
 			state={boardState}
-			winningFields={[]}
+			winningFields={winningFields}
 			onClick={canPlay ? handleSquareClick : undefined}
 		/>
 	);
