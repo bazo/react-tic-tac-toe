@@ -6,7 +6,7 @@ export const env = createEnv({
 		VITE_APP_NAME: z.string().min(1).default("Tic Tac Toe"),
 		VITE_API_URL: z.url().default("http://localhost"),
 		API_HOST: z.string().default("0.0.0.0"),
-		API_PORT: z.int().default(3001),
+		API_PORT: z.coerce.number().default(3001),
 		WEBSITE_DOMAIN: z.url().default("http://localhost:5173"),
 		SUPERTOKENS_CONNECTION_URI: z.url(),
 		SUPERTOKENS_API_KEY: z.string().optional(),
