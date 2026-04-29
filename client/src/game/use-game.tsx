@@ -51,7 +51,7 @@ const useGame = (initialSettings: Settings): GameHandlers => {
 		if (winner) {
 			return;
 		}
-		if (boardState[index] === undefined) {
+		if (boardState[index] === null) {
 			boardState[index] = player;
 
 			const newBoard = [...boardState];
