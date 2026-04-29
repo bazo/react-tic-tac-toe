@@ -85,7 +85,7 @@ export function useCreateGame({
 	});
 }
 
-export function useJoinGame({ onSuccess }: { onSuccess?: (data: void) => void } = {}) {
+export function useJoinGame({ onSuccess }: { onSuccess?: (gameId: string) => void } = {}) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -96,8 +96,8 @@ export function useJoinGame({ onSuccess }: { onSuccess?: (data: void) => void } 
 			const json = await res.json();
 			console.log(json);
 		},
-		onSuccess: (data) => {
-			onSuccess?.(data);
+		onSuccess: (_data, gameId) => {
+			onSuccess?.(gameId);
 			queryClient.invalidateQueries({ queryKey: ["games"] });
 		},
 	});

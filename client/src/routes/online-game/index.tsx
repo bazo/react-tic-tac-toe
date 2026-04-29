@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { SymbolText } from "shared/game-symbols";
 import type { GamePreview } from "shared/schemas";
 import { doesSessionExist } from "supertokens-auth-react/recipe/session";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/online-game/")({
 function RouteComponent() {
 	const data = Route.useLoaderData();
 	const loadGames = useLoadGames(data.id);
-
+	const navigate = useNavigate();
 	const createMutation = useCreateGame({
 		onSuccess: (created) => {
 			console.log("Game created successfully", created);
@@ -31,8 +31,13 @@ function RouteComponent() {
 	});
 
 	const joinMutation = useJoinGame({
-		onSuccess: (joined) => {
-			console.log("Joined game successfully", joined);
+		onSuccess: (gameId) => {
+			navigate({
+				to: "/online-game/$gameId",
+				params: {
+					gameId,
+				},
+			});
 		},
 	});
 
