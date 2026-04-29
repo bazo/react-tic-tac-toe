@@ -15,7 +15,7 @@ export const supertokensConfig = {
 	appInfo: {
 		appName: env.VITE_APP_NAME,
 		apiDomain: env.VITE_API_URL,
-		websiteDomain: env.VITE_WEBSITE_DOMAIN,
+		websiteDomain: env.WEBSITE_DOMAIN,
 		apiBasePath: "/auth",
 		websiteBasePath: "/auth",
 	},

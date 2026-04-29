@@ -28,11 +28,13 @@ const router = createRouter({
 
 const queryClient = new QueryClient();
 
+console.log(import.meta.env, import.meta, window.location)
+
 SuperTokens.init({
 	appInfo: {
 		appName: env.VITE_APP_NAME,
-		apiDomain: env.VITE_API_URL,
-		websiteDomain: env.VITE_WEBSITE_DOMAIN,
+		apiDomain: import.meta.env.DEV ? env.VITE_API_URL: window.location.origin,
+		websiteDomain: window.location.origin,
 		apiBasePath: "/auth",
 		websiteBasePath: "/auth",
 	},

@@ -24,9 +24,14 @@ import { createBoard } from "shared/game/functions";
 import { getNextBoardState } from "shared/game/online";
 import z from "zod";
 import { RoomManager } from "./room-manager";
+import fastifyStatic from "@fastify/static";
+import path from "node:path";
 supertokens.init(supertokensConfig);
 
 const server = Fastify();
+await server.register(fastifyStatic, {
+	root: path.resolve(__dirname, "../client/dist"),
+});
 await server.register(cookie);
 await server.register(websocket);
 
@@ -35,7 +40,7 @@ await server.register(cors, {
 		if (
 			!origin ||
 			origin.startsWith("http://localhost:") ||
-			origin === env.VITE_WEBSITE_DOMAIN
+			origin === env.WEBSITE_DOMAIN
 		) {
 			cb(null, true);
 		} else {
@@ -391,5 +396,18 @@ server.get("/ws/:gameId", { websocket: true }, async function wsHandler(socket, 
 	});
 });
 
-await server.listen({ port: env.VITE_API_PORT, host: env.VITE_API_HOST });
+server.setNotFoundHandler((request, reply) => {
+	const url = request.url.split("?")[0];
+	if (
+		url.startsWith("/api/") ||
+		url.startsWith("/auth/") ||
+		url.startsWith("/ws/") ||
+		url === "/ws"
+	) {
+		return reply.code(404).send({ error: "Not found" });
+	}
+	return reply.sendFile("index.html");
+});
+
+await server.listen({ port: env.API_PORT, host: env.API_HOST });
 console.log(`Server running on ${env.VITE_API_URL}`);
