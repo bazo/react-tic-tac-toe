@@ -6,7 +6,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+//import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import ProfileBasePlugin from "@supertokens-plugins/profile-base-react";
 import ProfileDetailsPlugin from "@supertokens-plugins/profile-details-react";
 import Session from "supertokens-auth-react/recipe/session";

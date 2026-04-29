@@ -7,7 +7,6 @@ import {
 	type UpdateProfileData,
 } from "shared/schemas";
 import { env } from "./env";
-import Game from "./game/game";
 
 export interface UserProfile {
 	id: string;

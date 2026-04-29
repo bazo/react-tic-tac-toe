@@ -39,3 +39,8 @@ tasks:
         dir: client
         cmds:
             - bun run dev
+
+    build:
+        dir: client
+        cmds:
+            - bun run build

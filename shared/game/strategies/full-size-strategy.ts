@@ -1,7 +1,7 @@
-import { times } from "ramda";
-
+import type { Player } from "../../game-symbols";
+import { times } from "../../utils";
 import { getColumnIndex, getRowIndex } from "../functions";
-import { type BoardState, type GameWinCheckStrategy, Player } from "../types";
+import { type BoardState, type GameWinCheckStrategy } from "../types";
 
 function createRowStartIndexes(size: number): number[] {
 	return times((i) => i * size, size);
@@ -30,12 +30,13 @@ const FullSizeStrategy = (size: number): GameWinCheckStrategy => {
 	function checkRow(boardState: BoardState, player: Player, index: number): boolean {
 		const rowIndex = getRowIndex(boardState, index);
 		const start = rowsStartIndexes[rowIndex];
-		for (let i = start; i < start + size; i++) {
-			if (boardState[i] !== player) {
-				return false;
+		if (start) {
+			for (let i = start; i < start + size; i++) {
+				if (boardState[i] !== player) {
+					return false;
+				}
 			}
 		}
-
 		return true;
 	}
 
@@ -43,16 +44,17 @@ const FullSizeStrategy = (size: number): GameWinCheckStrategy => {
 		const columnIndex = getColumnIndex(boardState, index);
 
 		const start = columnsStartIndexes[columnIndex];
-		const max = start + size;
-		let counter = 0;
-		for (let i = start; i < max; i++) {
-			const index = start + size * counter;
-			if (boardState[index] !== player) {
-				return false;
+		if (start) {
+			const max = start + size;
+			let counter = 0;
+			for (let i = start; i < max; i++) {
+				const index = start + size * counter;
+				if (boardState[index] !== player) {
+					return false;
+				}
+				counter++;
 			}
-			counter++;
 		}
-
 		return true;
 	}
 

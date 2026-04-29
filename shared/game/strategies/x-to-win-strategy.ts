@@ -1,8 +1,7 @@
-import { times } from "ramda";
-
 import { getColumnIndex, getRowIndex } from "../functions";
 import { type BoardState, type GameWinCheckStrategy } from "../types";
 import type { Player } from "shared/game-symbols";
+import { times } from "../../utils";
 
 function createRowStartIndexes(size: number): number[] {
 	return times((i) => i * size, size);
@@ -28,45 +27,46 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 	function checkRow(boardState: BoardState, player: Player, index: number): boolean {
 		const rowIndex = getRowIndex(boardState, index);
 		const min = rowsStartIndexes[rowIndex];
-		const max = min + size - 1;
+		if (min) {
+			const max = min + size - 1;
 
-		consecutiveFields = [index] as number[];
+			consecutiveFields = [index] as number[];
 
-		//check to the left of click
-		for (let i = 1; i < toWin + 1; i++) {
-			const x = index - i;
-			if (x < min) {
-				break;
+			//check to the left of click
+			for (let i = 1; i < toWin + 1; i++) {
+				const x = index - i;
+				if (x < min) {
+					break;
+				}
+
+				if (boardState[x] !== player) {
+					break;
+				} else {
+					consecutiveFields = addToArray(consecutiveFields, x);
+					if (consecutiveFields.length === toWin) {
+						return true;
+					}
+				}
 			}
 
-			if (boardState[x] !== player) {
-				break;
-			} else {
-				consecutiveFields = addToArray(consecutiveFields, x);
-				if (consecutiveFields.length === toWin) {
-					return true;
+			//check to the right of click
+			const iMax = toWin - consecutiveFields.length + 1;
+			for (let i = 1; i < iMax; i++) {
+				const x = index + i;
+				if (x > max) {
+					break;
+				}
+
+				if (boardState[x] !== player) {
+					break;
+				} else {
+					consecutiveFields = addToArray(consecutiveFields, x);
+					if (consecutiveFields.length === toWin) {
+						return true;
+					}
 				}
 			}
 		}
-
-		//check to the right of click
-		const iMax = toWin - consecutiveFields.length + 1;
-		for (let i = 1; i < iMax; i++) {
-			const x = index + i;
-			if (x > max) {
-				break;
-			}
-
-			if (boardState[x] !== player) {
-				break;
-			} else {
-				consecutiveFields = addToArray(consecutiveFields, x);
-				if (consecutiveFields.length === toWin) {
-					return true;
-				}
-			}
-		}
-
 		return false;
 	}
 
@@ -75,48 +75,49 @@ const XToWinStrategy = (size: number, toWin: number): GameWinCheckStrategy => {
 		const rowIndex = getRowIndex(boardState, index);
 
 		const min = columnsStartIndexes[columnIndex];
-		const max = min + (size - 1) * size;
+		if (min) {
+			const max = min + (size - 1) * size;
 
-		consecutiveFields = [index] as number[];
+			consecutiveFields = [index] as number[];
 
-		//check up from click
-		const startX = rowIndex * size + columnIndex;
-		for (let i = 1; i < toWin + 1; i++) {
-			const x = startX - i * size;
+			//check up from click
+			const startX = rowIndex * size + columnIndex;
+			for (let i = 1; i < toWin + 1; i++) {
+				const x = startX - i * size;
 
-			if (x < min) {
-				break;
+				if (x < min) {
+					break;
+				}
+
+				if (boardState[x] !== player) {
+					break;
+				} else {
+					consecutiveFields = addToArray(consecutiveFields, x);
+					if (consecutiveFields.length === toWin) {
+						return true;
+					}
+				}
 			}
 
-			if (boardState[x] !== player) {
-				break;
-			} else {
-				consecutiveFields = addToArray(consecutiveFields, x);
-				if (consecutiveFields.length === toWin) {
-					return true;
+			//check down from click
+			const iMax = toWin - consecutiveFields.length + 1;
+			for (let i = 1; i < iMax; i++) {
+				const x = startX + i * size;
+
+				if (x > max) {
+					break;
+				}
+
+				if (boardState[x] !== player) {
+					break;
+				} else {
+					consecutiveFields = addToArray(consecutiveFields, x);
+					if (consecutiveFields.length === toWin) {
+						return true;
+					}
 				}
 			}
 		}
-
-		//check down from click
-		const iMax = toWin - consecutiveFields.length + 1;
-		for (let i = 1; i < iMax; i++) {
-			const x = startX + i * size;
-
-			if (x > max) {
-				break;
-			}
-
-			if (boardState[x] !== player) {
-				break;
-			} else {
-				consecutiveFields = addToArray(consecutiveFields, x);
-				if (consecutiveFields.length === toWin) {
-					return true;
-				}
-			}
-		}
-
 		return false;
 	}
 

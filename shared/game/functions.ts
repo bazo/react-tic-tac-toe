@@ -1,7 +1,6 @@
-import { repeat } from "ramda";
-
 import { type BoardState } from "./types";
 import { Player, SymbolText } from "shared/game-symbols";
+import { repeat } from "../utils";
 
 export function createBoard(size: number): BoardState {
 	return repeat(null, Math.pow(size, 2));
@@ -50,7 +49,3 @@ export function isOnAntiDiagonal(boardState: BoardState, index: number): boolean
 
 	return index % (size - 1) === 0;
 }
-
-
-
-

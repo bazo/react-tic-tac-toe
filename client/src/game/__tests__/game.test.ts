@@ -1,13 +1,11 @@
 import { describe, expect, test } from "vitest";
 
-import {
-	createBoard,
-	getBoardSize,
+
+import { createBoard, getBoardSize,
 	getNextPlayer,
 	isBoardFilled,
-	playerSymbol,
-} from "../functions";
-import { Player, SymbolText } from "../types";
+	playerSymbol, } from "shared/game/functions";
+import { Player, SymbolText } from "shared/game-symbols";
 
 describe("game", () => {
 	test("createBoard", () => {
@@ -28,7 +26,7 @@ describe("game", () => {
 	test("playerSymbol", () => {
 		expect(playerSymbol(Player.CROSS)).toBe(SymbolText.CROSS);
 		expect(playerSymbol(Player.CIRCLE)).toBe(SymbolText.CIRCLE);
-		expect(playerSymbol(undefined)).toBe(SymbolText.EMPTY);
+		expect(playerSymbol(null)).toBe(SymbolText.EMPTY);
 	});
 
 	test("isBoardFilled", () => {
